@@ -2,6 +2,7 @@
 	import Test from "./components/Test.svelte";
 	import TodoList from "./components/TodoList.svelte";
 	import { Router, Route, Link } from "svelte-navigator";
+import GoogleLogin from "./components/GoogleLogin.svelte";
 
 	export let name: string;
 </script>
@@ -11,6 +12,8 @@
 		<h1>Hello {name}!</h1>
 		<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
 	
+		<GoogleLogin />
+
 		<Link to="test">Test</Link> | <Link to="todo">Todo</Link>
 
 		<Route path="test">
