@@ -9,3 +9,11 @@
 </script>
 
 <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+<style>
+    .g-signin2 {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1em;
+    }
+</style>
