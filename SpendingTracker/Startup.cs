@@ -2,7 +2,6 @@ using BL.Services;
 using BL.Services.Impl;
 using DAL_EF;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,6 @@ using SpendingTracker.Services;
 using SpendingTracker.Services.Impl;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SpendingTracker
 {
@@ -94,6 +92,8 @@ namespace SpendingTracker
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IWalletService, WalletService>();
+            services.AddScoped<ICategoryService, CategoryService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using BL.Services;
 using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Models.Response;
+using System.Threading.Tasks;
 
 namespace SpendingTracker.Controllers
 {
@@ -9,14 +9,30 @@ namespace SpendingTracker.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        [HttpGet]
-        public Test GetTest()
+        private readonly ICategoryService _categoryService;
+
+        public TestController(ICategoryService categoryService)
         {
-            return new Test
-            {
-                Number = 42,
-                Text = "That is the answer"
-            };
+            _categoryService = categoryService;
         }
+
+        [HttpGet]
+        public async Task<ActionResult> GetTest(int walletId)
+        {
+            return Ok(await _categoryService.GetCategoriesAsync(walletId));
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> PostTest([FromBody] TestPost model)
+        {
+            return Ok(await _categoryService.AddCategoryAsync(model.CategoryName, model.WalletId));
+        }
+    }
+
+    public class TestPost
+    {
+        public string CategoryName { get; set; }
+
+        public int WalletId { get; set; }
     }
 }

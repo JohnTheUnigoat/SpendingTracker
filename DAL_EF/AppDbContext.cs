@@ -16,16 +16,6 @@ namespace DAL_EF
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasData(new User
-            {
-                Id = 1,
-                FirstName = "John",
-                LastName = "Smith",
-                GoogleId = "asdf",
-                Email = "asdf@asdf.com",
-                PictureUrl = "no"
-            });
-
             modelBuilder.Entity<User>()
                 .HasOne<UserSettings>(u => u.Settings)
                 .WithOne()
