@@ -3,14 +3,16 @@ using DAL_EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DAL_EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210506125734_AddUserSettingsCategories")]
+    partial class AddUserSettingsCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,12 +30,12 @@ namespace DAL_EF.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WalletId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("WalletId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Categories");
                 });
@@ -94,31 +96,11 @@ namespace DAL_EF.Migrations
                     b.ToTable("UserSettings");
                 });
 
-            modelBuilder.Entity("DAL_EF.Entity.Wallet", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Wallets");
-                });
-
             modelBuilder.Entity("DAL_EF.Entity.Category", b =>
                 {
-                    b.HasOne("DAL_EF.Entity.Wallet", null)
+                    b.HasOne("DAL_EF.Entity.UserSettings", null)
                         .WithMany("Categories")
-                        .HasForeignKey("WalletId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -132,26 +114,12 @@ namespace DAL_EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DAL_EF.Entity.Wallet", b =>
-                {
-                    b.HasOne("DAL_EF.Entity.UserSettings", null)
-                        .WithMany("Wallets")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DAL_EF.Entity.User", b =>
                 {
                     b.Navigation("Settings");
                 });
 
             modelBuilder.Entity("DAL_EF.Entity.UserSettings", b =>
-                {
-                    b.Navigation("Wallets");
-                });
-
-            modelBuilder.Entity("DAL_EF.Entity.Wallet", b =>
                 {
                     b.Navigation("Categories");
                 });

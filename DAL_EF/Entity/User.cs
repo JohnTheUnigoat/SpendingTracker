@@ -17,5 +17,7 @@ namespace DAL_EF.Entity
         public string LastName { get; set; }
 
         public string PictureUrl { get; set; }
+
+        public UserSettings Settings { get; set; }
     }
 }
