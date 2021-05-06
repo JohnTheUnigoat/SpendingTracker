@@ -9,5 +9,11 @@ namespace BL.Services
         Task<int> AddCategoryAsync(AddCategoryDto dto);
 
         Task<IEnumerable<CategoryDomain>> GetCategoriesAsync(int walletId);
+
+        Task<bool> IsCategoryInWallet(int categoryId, int walletId);
+
+        Task RenameCategory(int categoryId, string name);
+
+        Task DeleteCategory(int categoryId);
     }
 }

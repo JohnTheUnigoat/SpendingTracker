@@ -41,5 +41,35 @@ namespace BL.Services.Impl
                 })
                 .ToListAsync();
         }
+
+        public async Task<bool> IsCategoryInWallet(int categoryId, int walletId)
+        {
+            return await _dbContext.Categories
+                .Where(c => c.Id == categoryId && c.WalletId == walletId)
+                .AnyAsync();
+        }
+
+        public async Task DeleteCategory(int categoryId)
+        {
+            var category = new Category
+            {
+                Id = categoryId
+            };
+
+            _dbContext.Categories.Attach(category);
+
+            _dbContext.Categories.Remove(category);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task RenameCategory(int categoryId, string name)
+        {
+            Category category = await _dbContext.Categories.FindAsync(categoryId);
+
+            category.Name = name;
+
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

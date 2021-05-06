@@ -49,5 +49,37 @@ namespace SpendingTracker.Controllers
 
             return await _categoryService.AddCategoryAsync(request.ToDto());
         }
+
+        [HttpPut("{categoryId:int}")]
+        public async Task RenameCategory(int walletId, int categoryId, [FromBody]string name)
+        {
+            if(await _categoryService.IsCategoryInWallet(categoryId, walletId) == false)
+            {
+                throw new HttpStatusException(404);
+            }
+
+            if (await _walletService.IsUserAuthorizedForWallet(walletId, UserId) == false)
+            {
+                throw new HttpStatusException(401);
+            }
+
+            await _categoryService.RenameCategory(categoryId, name);
+        }
+
+        [HttpDelete("{categoryId:int}")]
+        public async Task DeleteCategory(int walletId, int categoryId)
+        {
+            if (await _categoryService.IsCategoryInWallet(categoryId, walletId) == false)
+            {
+                throw new HttpStatusException(404);
+            }
+
+            if (await _walletService.IsUserAuthorizedForWallet(walletId, UserId) == false)
+            {
+                throw new HttpStatusException(401);
+            }
+
+            await _categoryService.DeleteCategory(categoryId);
+        }
     }
 }
