@@ -1,6 +1,5 @@
 ﻿using BL.Services;
 using Microsoft.AspNetCore.Mvc;
-using SpendingTracker.Models.Response;
 using System.Threading.Tasks;
 
 namespace SpendingTracker.Controllers
@@ -22,11 +21,11 @@ namespace SpendingTracker.Controllers
             return Ok(await _categoryService.GetCategoriesAsync(walletId));
         }
 
-        [HttpPost]
-        public async Task<ActionResult> PostTest([FromBody] TestPost model)
-        {
-            return Ok(await _categoryService.AddCategoryAsync(model.CategoryName, model.WalletId));
-        }
+        //[HttpPost]
+        //public async Task<ActionResult> PostTest([FromBody] TestPost model)
+        //{
+        //    return Ok(await _categoryService.AddCategoryAsync(model.CategoryName, model.WalletId));
+        //}
     }
 
     public class TestPost

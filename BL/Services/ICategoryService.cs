@@ -6,7 +6,7 @@ namespace BL.Services
 {
     public interface ICategoryService
     {
-        Task<int> AddCategoryAsync(string name, int walletId);
+        Task<int> AddCategoryAsync(AddCategoryDto dto);
 
         Task<IEnumerable<CategoryDomain>> GetCategoriesAsync(int walletId);
     }

@@ -1,4 +1,6 @@
-﻿using DAL_EF;
+﻿using Core.Exceptions;
+using DAL_EF;
+using DAL_EF.Entity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +18,14 @@ namespace BL.Services.Impl
 
         public async Task<bool> IsUserAuthorizedForWallet(int walletId, int userId)
         {
-            return await _dbContext.Wallets.Where(w => w.Id == walletId && w.UserId == userId).AnyAsync();
+            Wallet wallet = await _dbContext.Wallets.FindAsync(walletId);
+
+            if (wallet == null)
+            {
+                throw new HttpStatusException(404);
+            }
+
+            return wallet.UserId == userId;
         }
     }
 }

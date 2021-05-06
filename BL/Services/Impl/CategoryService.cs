@@ -1,4 +1,5 @@
-﻿using BL.Model.Category;
+﻿using BL.Mappers;
+using BL.Model.Category;
 using DAL_EF;
 using DAL_EF.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -18,13 +19,9 @@ namespace BL.Services.Impl
             _dbContext = dbContext;
         }
 
-        public async Task<int> AddCategoryAsync(string name, int walletId)
+        public async Task<int> AddCategoryAsync(AddCategoryDto dto)
         {
-            var newCategory = new Category
-            {
-                Name = name,
-                WalletId = walletId
-            };
+            var newCategory = dto.ToEntity();
 
             _dbContext.Categories.Add(newCategory);
 
