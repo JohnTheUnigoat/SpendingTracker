@@ -22,14 +22,9 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpPost("google-sign-in")]
-        public async Task<ActionResult<AuthResponse>> SignInWithGoogle(string idToken)
+        public async Task<ActionResult<AuthResponse>> SignInWithGoogle([FromBody] string idToken)
         {
             var res = await _authService.GoogleSignIn(idToken);
-
-            if (res == null)
-            {
-                return new StatusCodeResult(403);
-            }
 
             return Ok(res);
         }

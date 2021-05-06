@@ -1,5 +1,6 @@
 ﻿using BL.Model.User;
 using BL.Services;
+using Core.Exceptions;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -63,7 +64,7 @@ namespace SpendingTracker.Services.Impl
             }
             catch (InvalidJwtException)
             {
-                return null;
+                throw new HttpStatusException(403);
             }
         }
 

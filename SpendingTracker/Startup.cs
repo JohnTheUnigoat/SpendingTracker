@@ -1,6 +1,8 @@
 using BL.Services;
 using BL.Services.Impl;
 using DAL_EF;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,11 +10,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SpendingTracker.Config;
 using SpendingTracker.Middleware;
 using SpendingTracker.Services;
 using SpendingTracker.Services.Impl;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SpendingTracker
 {
@@ -33,11 +39,54 @@ namespace SpendingTracker
                 x.UseSqlServer(Configuration.GetConnectionString("SpendingTracker"));
             });
 
-            services.AddControllers();
+            services.AddControllers(x =>
+            {
+                x.Filters.Add<HttpStatusExceptionFilter>();
+            });
+
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(x =>
+                {
+                    x.TokenValidationParameters.ValidateActor = false;
+                    x.TokenValidationParameters.ValidateAudience = false;
+                    x.TokenValidationParameters.ValidateIssuer = false;
+                    x.TokenValidationParameters.ValidateLifetime = true;
+                    x.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.ASCII.GetBytes(Configuration.GetSection(nameof(JWTSettings)).Get<JWTSettings>().AccessTokenSecret));
+                });
+
+            services.AddAuthorization();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SpendingTracker", Version = "v1" });
+
+                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = JwtBearerDefaults.AuthenticationScheme
+                            },
+                            Scheme = JwtBearerDefaults.AuthenticationScheme,
+                            Name = JwtBearerDefaults.AuthenticationScheme,
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
             services.Configure<GoogleSettings>(Configuration.GetSection(nameof(GoogleSettings)));
