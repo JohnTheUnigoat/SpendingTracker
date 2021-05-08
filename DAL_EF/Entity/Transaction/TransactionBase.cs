@@ -1,4 +1,6 @@
-﻿namespace DAL_EF.Entity.Transaction
+﻿using System;
+
+namespace DAL_EF.Entity.Transaction
 {
     public abstract class TransactionBase
     {
@@ -9,5 +11,7 @@
         public Wallet SourceWallet { get; set; }
 
         public decimal Amount { get; set; }
+
+        public DateTime TimeStamp { get; set; }
     }
 }
