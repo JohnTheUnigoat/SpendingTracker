@@ -22,12 +22,15 @@ namespace SpendingTracker
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            env = environment;
         }
 
         public IConfiguration Configuration { get; }
+
+        private readonly IWebHostEnvironment env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -35,6 +38,11 @@ namespace SpendingTracker
             services.AddDbContext<AppDbContext>(x =>
             {
                 x.UseSqlServer(Configuration.GetConnectionString("SpendingTracker"));
+
+                if (env.IsDevelopment())
+                {
+                    x.EnableSensitiveDataLogging();
+                }
             });
 
             services.AddControllers(x =>
@@ -100,7 +108,6 @@ namespace SpendingTracker
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
-
             if (env.IsDevelopment())
             {
                 app.UseCors(x =>
