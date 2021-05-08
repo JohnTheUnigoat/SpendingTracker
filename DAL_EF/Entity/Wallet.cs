@@ -11,5 +11,7 @@ namespace DAL_EF.Entity
         public int UserId { get; set; }
 
         public ICollection<Category> Categories { get; set; }
+
+        public string DefaultReportPeriod { get; set; }
     }
 }

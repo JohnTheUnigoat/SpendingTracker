@@ -1,4 +1,5 @@
-﻿using DAL_EF.Entity;
+﻿using Core.Const;
+using DAL_EF.Entity;
 using DAL_EF.Entity.Transaction;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,11 @@ namespace DAL_EF
                 .WithOne()
                 .HasForeignKey(c => c.WalletId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Wallet>()
+                .Property(w => w.DefaultReportPeriod)
+                .IsRequired(true)
+                .HasDefaultValue(ReportPeriods.CurrentMonth);
 
             modelBuilder.Entity<TransactionBase>()
                 .HasOne(t => t.SourceWallet)
