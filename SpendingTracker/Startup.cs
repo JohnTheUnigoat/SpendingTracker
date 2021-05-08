@@ -49,7 +49,8 @@ namespace SpendingTracker
                     x.TokenValidationParameters.ValidateActor = false;
                     x.TokenValidationParameters.ValidateAudience = false;
                     x.TokenValidationParameters.ValidateIssuer = false;
-                    x.TokenValidationParameters.ValidateLifetime = true;
+                    //x.TokenValidationParameters.ValidateLifetime = true;
+                    x.TokenValidationParameters.ValidateLifetime = false;
                     x.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.ASCII.GetBytes(Configuration.GetSection(nameof(JWTSettings)).Get<JWTSettings>().AccessTokenSecret));
                 });

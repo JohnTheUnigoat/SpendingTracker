@@ -31,7 +31,7 @@ namespace SpendingTracker.Controllers
         [HttpGet]
         public async Task<IEnumerable<CategoryResponse>> GetCategories(int walletId)
         {
-            if (!await _walletService.IsUserAuthorizedForWallet(walletId, UserId))
+            if (!await _walletService.IsUserAuthorizedForWalletAsync(walletId, UserId))
             {
                 throw new HttpStatusException(401);
             }
@@ -42,7 +42,7 @@ namespace SpendingTracker.Controllers
         [HttpPost]
         public async Task<int> AddCategory([FromRoute] AddCategoryRequest request)
         {
-            if (!await _walletService.IsUserAuthorizedForWallet(request.walletId, UserId))
+            if (!await _walletService.IsUserAuthorizedForWalletAsync(request.walletId, UserId))
             {
                 throw new HttpStatusException(401);
             }
@@ -51,14 +51,14 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpPut("{categoryId:int}")]
-        public async Task RenameCategory(int walletId, int categoryId, [FromBody]string name)
+        public async Task RenameCategory(int walletId, int categoryId, [FromBody] string name)
         {
             if(await _categoryService.IsCategoryInWallet(categoryId, walletId) == false)
             {
                 throw new HttpStatusException(404);
             }
 
-            if (await _walletService.IsUserAuthorizedForWallet(walletId, UserId) == false)
+            if (await _walletService.IsUserAuthorizedForWalletAsync(walletId, UserId) == false)
             {
                 throw new HttpStatusException(401);
             }
@@ -74,7 +74,7 @@ namespace SpendingTracker.Controllers
                 throw new HttpStatusException(404);
             }
 
-            if (await _walletService.IsUserAuthorizedForWallet(walletId, UserId) == false)
+            if (await _walletService.IsUserAuthorizedForWalletAsync(walletId, UserId) == false)
             {
                 throw new HttpStatusException(401);
             }
