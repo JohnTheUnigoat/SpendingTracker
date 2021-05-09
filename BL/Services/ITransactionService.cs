@@ -10,5 +10,7 @@ namespace BL.Services
     public interface ITransactionService
     {
         Task<IEnumerable<ShortTransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto);
+
+        Task<int> AddTransactionAsync(AddTransactionDtoBase dto);
     }
 }

@@ -1,4 +1,5 @@
-﻿using BL.Model.Transaction;
+﻿using BL.Mappers;
+using BL.Model.Transaction;
 using Core.Const;
 using Core.Exceptions;
 using DAL_EF;
@@ -89,6 +90,35 @@ namespace BL.Services.Impl
                 .ToListAsync();
 
             return res;
+        }
+
+        public async Task<int> AddTransactionAsync(AddTransactionDtoBase dto)
+        {
+            if (_dbContext.Wallets.Any(w => w.Id == dto.WalletId) == false)
+            {
+                throw new HttpStatusException(404);
+            }
+
+            TransactionBase newTransaction;
+
+            switch (dto)
+            {
+                case AddCategoryTransactionDto categoryDto:
+                    newTransaction = categoryDto.ToEntity();
+                    break;
+                case AddWalletTransactionDto walletDto:
+                    newTransaction = walletDto.ToEntity();
+                    break;
+                default: throw new ArgumentException("Unknown/unhandled addTransactionDto type.");
+            }
+
+            newTransaction.TimeStamp = DateTime.Now;
+
+            _dbContext.Transactions.Add(newTransaction);
+
+            await _dbContext.SaveChangesAsync();
+
+            return newTransaction.Id;
         }
     }
 }
