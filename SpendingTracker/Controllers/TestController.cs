@@ -1,4 +1,5 @@
 ﻿using BL.Services;
+using Core.Const;
 using DAL_EF;
 using DAL_EF.Entity.Transaction;
 using Microsoft.AspNetCore.Mvc;
@@ -43,16 +44,19 @@ namespace SpendingTracker.Controllers
             //return Ok();
             //return Ok(await _categoryService.GetCategoriesAsync(walletId));
 
-            var res = dbContext.Transactions.Select(t => new Test
-            {
-                TransactionId = t.Id,
-                Amount = t.Amount,
-                Target = (t is CategoryTransaction) ?
-                    (t as CategoryTransaction).Category.Name :
-                    (t as WalletTransaction).TargetWallet.Name
-            });
+            var a = ReportPeriods.CurrentDay;
+            var b = ReportPeriods.GetText(ReportPeriods.CurrentDay);
 
-            return Ok(res);
+            //var res = dbContext.Transactions.Select(t => new Test
+            //{
+            //    TransactionId = t.Id,
+            //    Amount = t.Amount,
+            //    Target = (t is CategoryTransaction) ?
+            //        (t as CategoryTransaction).Category.Name :
+            //        (t as WalletTransaction).TargetWallet.Name
+            //});
+
+            return Ok(new { A = a, B = b });
         }
 
         //[HttpPost]
