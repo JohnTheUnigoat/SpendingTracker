@@ -94,6 +94,14 @@ namespace BL.Services.Impl
 
         public async Task<int> AddTransactionAsync(AddTransactionDtoBase dto)
         {
+            if (dto.Amount == 0)
+            {
+                throw new ValidationException(new()
+                {
+                    { nameof(dto.Amount), "Transaction amount can't be 0." }
+                });
+            }
+
             if (_dbContext.Wallets.Any(w => w.Id == dto.WalletId) == false)
             {
                 throw new HttpStatusException(404);
@@ -107,6 +115,14 @@ namespace BL.Services.Impl
                     newTransaction = categoryDto.ToEntity();
                     break;
                 case AddWalletTransactionDto walletDto:
+                    if (walletDto.Amount < 0)
+                    {
+                        throw new ValidationException(new()
+                        {
+                            { nameof(dto.Amount), "Transaction amount can't be negative when transfering to a wallet." }
+                        });
+                    }
+
                     newTransaction = walletDto.ToEntity();
                     break;
                 default: throw new ArgumentException("Unknown/unhandled addTransactionDto type.");

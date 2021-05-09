@@ -7,7 +7,5 @@ namespace DAL_EF.Entity
     {
         [Key]
         public int UserId { get; set; }
-
-        public ICollection<Wallet> Wallets { get; set; }
     }
 }

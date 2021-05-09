@@ -10,5 +10,12 @@ namespace SpendingTracker.Middleware
 
             return app;
         }
+
+        public static IApplicationBuilder UseWalletAuthorization(this IApplicationBuilder app)
+        {
+            app.UseMiddleware<WalletAuthorizationMiddleware>();
+
+            return app;
+        }
     }
 }

@@ -26,7 +26,7 @@ namespace DAL_EF
                 .HasForeignKey<UserSettings>(us => us.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<UserSettings>()
+            modelBuilder.Entity<User>()
                 .HasMany(us => us.Wallets)
                 .WithOne()
                 .HasForeignKey(w => w.UserId)

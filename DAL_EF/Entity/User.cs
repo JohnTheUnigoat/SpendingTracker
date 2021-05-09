@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace DAL_EF.Entity
 {
@@ -19,5 +20,7 @@ namespace DAL_EF.Entity
         public string PictureUrl { get; set; }
 
         public UserSettings Settings { get; set; }
+
+        public ICollection<Wallet> Wallets { get; set; }
     }
 }

@@ -136,6 +136,8 @@ namespace SpendingTracker
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseWalletAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
