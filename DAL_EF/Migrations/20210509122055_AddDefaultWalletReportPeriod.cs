@@ -2,7 +2,7 @@
 
 namespace DAL_EF.Migrations
 {
-    public partial class AddDefaultReportPeriodField : Migration
+    public partial class AddDefaultWalletReportPeriod : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,7 +11,7 @@ namespace DAL_EF.Migrations
                 table: "Wallets",
                 type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: "Current month");
+                defaultValue: "curr_month");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

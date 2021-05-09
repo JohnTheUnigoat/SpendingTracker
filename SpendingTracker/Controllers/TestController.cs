@@ -1,4 +1,5 @@
-﻿using BL.Services;
+﻿using BL.Model.Transaction;
+using BL.Services;
 using Core.Const;
 using DAL_EF;
 using DAL_EF.Entity.Transaction;
@@ -13,50 +14,27 @@ namespace SpendingTracker.Controllers
     public class TestController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
+        private readonly ITransactionService _transactionService;
 
         private readonly AppDbContext dbContext;
 
-        public TestController(ICategoryService categoryService, AppDbContext dbContext)
+        public TestController(ICategoryService categoryService, AppDbContext dbContext, ITransactionService transactionService)
         {
             _categoryService = categoryService;
             this.dbContext = dbContext;
+            _transactionService = transactionService;
         }
 
         [HttpGet]
         public async Task<ActionResult> GetTest()
         {
-            //dbContext.Transactions.Add(new CategoryTransaction
-            //{
-            //    Amount = 420.00m,
-            //    SourceWalletId = 5,
-            //    CategoryId = 15
-            //});
+            var res = await _transactionService.GetTransactionsAsync(new GetTransactionsDto
+            {
+                WalletId = 5,
+                ReportPeriod = ReportPeriods.CurrentYear
+            });
 
-            //dbContext.Transactions.Add(new WalletTransaction
-            //{
-            //    Amount = 420.00m,
-            //    SourceWalletId = 5,
-            //    TargetWalletId = 2
-            //});
-
-            //await dbContext.SaveChangesAsync();
-
-            //return Ok();
-            //return Ok(await _categoryService.GetCategoriesAsync(walletId));
-
-            var a = ReportPeriods.CurrentDay;
-            var b = ReportPeriods.GetText(ReportPeriods.CurrentDay);
-
-            //var res = dbContext.Transactions.Select(t => new Test
-            //{
-            //    TransactionId = t.Id,
-            //    Amount = t.Amount,
-            //    Target = (t is CategoryTransaction) ?
-            //        (t as CategoryTransaction).Category.Name :
-            //        (t as WalletTransaction).TargetWallet.Name
-            //});
-
-            return Ok(new { A = a, B = b });
+            return Ok(res);
         }
 
         //[HttpPost]

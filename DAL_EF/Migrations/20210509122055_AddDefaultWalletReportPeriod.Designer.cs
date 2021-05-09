@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL_EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210508164650_AddDefaultReportPeriodField")]
-    partial class AddDefaultReportPeriodField
+    [Migration("20210509122055_AddDefaultWalletReportPeriod")]
+    partial class AddDefaultWalletReportPeriod
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -126,7 +126,7 @@ namespace DAL_EF.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Current month");
+                        .HasDefaultValue("curr_month");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

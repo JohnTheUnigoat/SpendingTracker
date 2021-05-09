@@ -47,7 +47,7 @@ namespace SpendingTracker
 
             services.AddControllers(x =>
             {
-                x.Filters.Add<HttpStatusExceptionFilter>();
+                x.Filters.Add<CustomExceptionFilter>();
             });
 
             services
@@ -103,6 +103,7 @@ namespace SpendingTracker
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IWalletService, WalletService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ITransactionService, TransactionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

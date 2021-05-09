@@ -22,6 +22,14 @@ namespace Core.Const
                 default: throw new ArgumentException("reportPeriod should be one of the ReportPeriods constants.");
             }
         }
+
+        public static string[] GetValues()
+        {
+            return new[]
+            {
+                CurrentDay, CurrentWeek, CurrentMonth, CurrentYear, AllTime
+            };
+        }
     }
 }
 

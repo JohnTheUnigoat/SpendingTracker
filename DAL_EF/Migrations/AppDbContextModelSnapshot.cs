@@ -124,7 +124,7 @@ namespace DAL_EF.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Current month");
+                        .HasDefaultValue("curr_month");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
