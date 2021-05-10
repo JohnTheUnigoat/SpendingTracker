@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SpendingTracker.Mappers;
 using SpendingTracker.Models.Transaction.Request;
 using System;
 using System.Collections.Generic;
@@ -26,12 +27,10 @@ namespace SpendingTracker.Controllers
             _walletService = walletService;
         }
 
-        //[HttpPost]
-        //public async Task<int> AddTransaction(int walletId, [FromBody] AddTransactionRequest request)
-        //{
-
-
-        //    return await _transactionService.AddTransactionAsync()
-        //}
+        [HttpPost]
+        public async Task<int> AddTransaction(int walletId, [FromBody] AddTransactionRequest request)
+        {
+            return await _transactionService.AddTransactionAsync(request.ToDto(walletId));
+        }
     }
 }
