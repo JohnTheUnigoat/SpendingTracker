@@ -17,10 +17,14 @@ namespace SpendingTracker.Controllers
     public class TransactionController : BaseController
     {
         private readonly ITransactionService _transactionService;
+        private readonly IWalletService _walletService;
 
-        public TransactionController(ITransactionService transactionService)
+        public TransactionController(
+            ITransactionService transactionService,
+            IWalletService walletService)
         {
             _transactionService = transactionService;
+            _walletService = walletService;
         }
 
         [HttpGet]
@@ -32,7 +36,7 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpPost]
-        public async Task<int> AddTransaction(int walletId, [FromBody] AddTransactionRequest request)
+        public async Task<int> AddTransaction(int walletId, [FromBody] AddUpdateTransactionRequest request)
         {
             if (request.TargetWalletId.HasValue && request.CategoryId.HasValue)
             {
@@ -57,6 +61,40 @@ namespace SpendingTracker.Controllers
                 dto = request.ToWalletDto(walletId);
 
             return await _transactionService.AddTransactionAsync(dto);
+        }
+
+        [HttpPut]
+        public async Task<TransactionResponse> UpdateTransaction(
+            int walletId, int transactionId, [FromBody] AddUpdateTransactionRequest request)
+        {
+            if (await _walletService.IsTransactionInWalletAsync(walletId, transactionId) == false)
+            {
+                throw new HttpStatusException(404);
+            }
+
+            if (request.TargetWalletId.HasValue && request.CategoryId.HasValue)
+            {
+                throw new ValidationException(new()
+                {
+                    {
+                        nameof(request.TargetWalletId),
+                        $"Only one of the fields {nameof(request.TargetWalletId)}, {nameof(request.CategoryId)} should have a value."
+                    },
+                    {
+                        nameof(request.CategoryId),
+                        $"Only one of the fields {nameof(request.TargetWalletId)}, {nameof(request.CategoryId)} should have a value."
+                    },
+                });
+            }
+
+            AddUpdateTransactionDtoBase dto;
+
+            if (request.CategoryId.HasValue)
+                dto = request.ToCategoryDto(walletId);
+            else
+                dto = request.ToWalletDto(walletId);
+
+            return (await _transactionService.UpdateTransaction(transactionId, dto)).ToResponse();
         }
     }
 }

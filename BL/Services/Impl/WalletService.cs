@@ -67,5 +67,12 @@ namespace BL.Services.Impl
 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<bool> IsTransactionInWalletAsync(int walletId, int transactionId)
+        {
+            return await _dbContext.Transactions
+                .Where(t => t.Id == transactionId && t.WalletId == walletId)
+                .AnyAsync();
+        }
     }
 }

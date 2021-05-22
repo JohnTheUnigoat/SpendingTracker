@@ -2,7 +2,7 @@
 
 namespace SpendingTracker.Models.Transaction.Request
 {
-    public class AddTransactionRequest
+    public class AddUpdateTransactionRequest
     {
         public decimal Amount { get; set; }
 

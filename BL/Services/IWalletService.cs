@@ -8,6 +8,8 @@ namespace BL.Services
     {
         Task<bool> IsUserAuthorizedForWalletAsync(int walletId, int userId);
 
+        Task<bool> IsTransactionInWalletAsync(int walletId, int transactionId);
+
         Task<IEnumerable<WalletDomain>> GetWalletsAsync(int userId);
 
         Task<int> AddWalletAsync(AddWalletDto dto);
