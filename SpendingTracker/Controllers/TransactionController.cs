@@ -2,13 +2,9 @@
 using BL.Services;
 using Core.Exceptions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Mappers;
 using SpendingTracker.Models.Transaction.Request;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpendingTracker.Controllers
@@ -19,14 +15,10 @@ namespace SpendingTracker.Controllers
     public class TransactionController : BaseController
     {
         private readonly ITransactionService _transactionService;
-        private readonly IWalletService _walletService;
 
-        public TransactionController(
-            ITransactionService transactionService,
-            IWalletService walletService)
+        public TransactionController(ITransactionService transactionService)
         {
             _transactionService = transactionService;
-            _walletService = walletService;
         }
 
         [HttpPost]
