@@ -31,20 +31,20 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpPost]
-        public async Task<int> AddCategory([FromRoute] AddCategoryRequest request)
+        public async Task<int> AddCategory(int walletId, [FromBody] AddUpdateCategoryRequest request)
         {
-            return await _categoryService.AddCategoryAsync(request.ToDto());
+            return await _categoryService.AddCategoryAsync(request.ToDto(walletId));
         }
 
         [HttpPut("{categoryId:int}")]
-        public async Task RenameCategory(int walletId, int categoryId, [FromBody] string name)
+        public async Task RenameCategory(int walletId, int categoryId, [FromBody] AddUpdateCategoryRequest request)
         {
             if(await _categoryService.IsCategoryInWallet(categoryId, walletId) == false)
             {
                 throw new HttpStatusException(404);
             }
 
-            await _categoryService.RenameCategory(categoryId, name);
+            await _categoryService.RenameCategory(categoryId, request.Name);
         }
 
         [HttpDelete("{categoryId:int}")]

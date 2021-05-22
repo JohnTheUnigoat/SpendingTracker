@@ -37,9 +37,9 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpPut("{walletId:int}")]
-        public async Task RenameWallet(int walletId, [FromBody] string name)
+        public async Task RenameWallet(int walletId, [FromBody] RenameWalletRequest request)
         {
-            await _walletService.RenameWalletAsync(walletId, name);
+            await _walletService.RenameWalletAsync(walletId, request.Name);
         }
     }
 }
