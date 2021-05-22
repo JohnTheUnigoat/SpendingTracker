@@ -26,13 +26,13 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetTest(int walletId)
+        public async Task<ActionResult> GetTest(int walletId, int transactionId)
         {
-            var res = await _transactionService.GetTransactionsAsync(new GetTransactionsDto
-            {
-                WalletId = walletId,
-                ReportPeriod = ReportPeriods.CurrentYear
-            });
+            //var res = await _transactionService.GetTransactionsAsync(new GetTransactionsDto
+            //{
+            //    WalletId = walletId,
+            //    ReportPeriod = ReportPeriods.CurrentYear
+            //});
 
             //var res = await _transactionService.AddTransactionAsync(new AddCategoryTransactionDto
             //{
@@ -40,6 +40,13 @@ namespace SpendingTracker.Controllers
             //    CaterodyId = 15,
             //    WalletId = 5
             //});
+
+            var res = await _transactionService.UpdateTransaction(transactionId, new AddUpdateWalletTransactionDto
+            {
+                Amount = 134,
+                TargetWalletId = 3,
+                WalletId = walletId
+            });
 
             return Ok(res);
         }

@@ -5,14 +5,14 @@ namespace BL.Mappers
 {
     public static class TransactionMapper
     {
-        public static CategoryTransaction ToEntity(this AddCategoryTransactionDto dto) => new CategoryTransaction
+        public static CategoryTransaction ToEntity(this AddUpdateCategoryTransactionDto dto) => new CategoryTransaction
         {
             Amount = dto.Amount,
             WalletId = dto.WalletId,
             CategoryId = dto.CaterodyId
         };
 
-        public static WalletTransaction ToEntity(this AddWalletTransactionDto dto) => new WalletTransaction
+        public static WalletTransaction ToEntity(this AddUpdateWalletTransactionDto dto) => new WalletTransaction
         {
             Amount = dto.Amount,
             WalletId = dto.WalletId,

@@ -49,7 +49,7 @@ namespace SpendingTracker.Controllers
                 });
             }
 
-            AddTransactionDtoBase dto;
+            AddUpdateTransactionDtoBase dto;
 
             if (request.CategoryId.HasValue)
                 dto = request.ToCategoryDto(walletId);

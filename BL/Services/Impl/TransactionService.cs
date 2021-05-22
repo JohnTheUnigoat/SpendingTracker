@@ -140,7 +140,7 @@ namespace BL.Services.Impl
             return res;
         }
 
-        public async Task<int> AddTransactionAsync(AddTransactionDtoBase dto)
+        public async Task<int> AddTransactionAsync(AddUpdateTransactionDtoBase dto)
         {
             if (dto.Amount == 0)
             {
@@ -159,10 +159,10 @@ namespace BL.Services.Impl
 
             switch (dto)
             {
-                case AddCategoryTransactionDto categoryDto:
+                case AddUpdateCategoryTransactionDto categoryDto:
                     newTransaction = categoryDto.ToEntity();
                     break;
-                case AddWalletTransactionDto walletDto:
+                case AddUpdateWalletTransactionDto walletDto:
                     if (walletDto.Amount < 0)
                     {
                         throw new ValidationException(new()
@@ -186,6 +186,52 @@ namespace BL.Services.Impl
             await _dbContext.SaveChangesAsync();
 
             return newTransaction.Id;
+        }
+
+        public async Task<TransactionDomain> UpdateTransaction(int transactionId, AddUpdateTransactionDtoBase dto)
+        {
+            TransactionBase transaction = _dbContext.Transactions.Find(transactionId);
+
+            if (transaction == null)
+            {
+                throw new HttpStatusException(404);
+            }
+
+            transaction.Amount = dto.Amount;
+
+            if (dto.ManualTimestamp != null)
+                transaction.TimeStamp = dto.ManualTimestamp.Value;
+
+            TransactionBase replacementTransaction;
+
+            switch (transaction)
+            {
+                case CategoryTransaction ct:
+                    var cDto = dto as AddUpdateCategoryTransactionDto;
+                    ct.CategoryId = cDto.CaterodyId;
+                    break;
+                case WalletTransaction ct:
+                    var wDto = dto as AddUpdateWalletTransactionDto;
+                    ct.TargetWalletId = wDto.TargetWalletId;
+                    break;
+                default: throw new NotImplementedException(
+                    "Updating for this transaction type is not implemented (or something went wrong)");
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return await _dbContext.Transactions
+                .Where(t => t.Id == transactionId)
+                .Select(t => new TransactionDomain
+                {
+                    Id = t.Id,
+                    Amount = t.Amount,
+                    Target = (t is CategoryTransaction) ?
+                        (t as CategoryTransaction).Category.Name :
+                        (t as WalletTransaction).TargetWallet.Name,
+                    Timestamp = t.TimeStamp
+                })
+                .SingleAsync();
         }
     }
 }

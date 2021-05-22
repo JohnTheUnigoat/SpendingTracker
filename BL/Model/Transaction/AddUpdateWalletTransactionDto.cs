@@ -1,6 +1,6 @@
 ﻿namespace BL.Model.Transaction
 {
-    public class AddWalletTransactionDto : AddTransactionDtoBase
+    public class AddUpdateWalletTransactionDto : AddUpdateTransactionDtoBase
     {
         public int TargetWalletId { get; set; }
     }

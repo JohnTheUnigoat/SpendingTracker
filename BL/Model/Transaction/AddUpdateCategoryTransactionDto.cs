@@ -1,6 +1,6 @@
 ﻿namespace BL.Model.Transaction
 {
-    public class AddCategoryTransactionDto : AddTransactionDtoBase
+    public class AddUpdateCategoryTransactionDto : AddUpdateTransactionDtoBase
     {
         public int CaterodyId { get; set; }
     }

@@ -2,7 +2,7 @@
 
 namespace BL.Model.Transaction
 {
-    public abstract class AddTransactionDtoBase
+    public abstract class AddUpdateTransactionDtoBase
     {
         public int WalletId { get; set; }
 

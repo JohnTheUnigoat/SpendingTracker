@@ -11,6 +11,8 @@ namespace BL.Services
     {
         Task<List<TransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto);
 
-        Task<int> AddTransactionAsync(AddTransactionDtoBase dto);
+        Task<int> AddTransactionAsync(AddUpdateTransactionDtoBase dto);
+
+        Task<TransactionDomain> UpdateTransaction(int transactionid, AddUpdateTransactionDtoBase dto);
     }
 }

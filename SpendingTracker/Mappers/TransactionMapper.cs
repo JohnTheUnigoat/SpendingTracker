@@ -8,7 +8,7 @@ namespace SpendingTracker.Mappers
 {
     public static class TransactionMapper
     {
-        public static AddCategoryTransactionDto ToCategoryDto(
+        public static AddUpdateCategoryTransactionDto ToCategoryDto(
             this AddTransactionRequest request,
             int walletId) => new()
             {
@@ -18,7 +18,7 @@ namespace SpendingTracker.Mappers
                 CaterodyId = request.CategoryId.Value
             };
 
-        public static AddWalletTransactionDto ToWalletDto(
+        public static AddUpdateWalletTransactionDto ToWalletDto(
             this AddTransactionRequest request,
             int walletId) => new()
             {
