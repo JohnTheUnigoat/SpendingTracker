@@ -73,7 +73,16 @@ namespace BL.Services.Impl
                 wallet.DefaultReportPeriod :
                 dto.ReportPeriod;
 
-            var (fromDate, toDate) = GetReportPeriodLimits(reportPeriod);
+            DateTime fromDate, toDate;
+
+            try
+            {
+                (fromDate, toDate) = GetReportPeriodLimits(reportPeriod);
+            }
+            catch (ArgumentException e)
+            {
+                throw new ValidationException(new() { { nameof(dto.ReportPeriod), e.Message } });
+            }
 
             IQueryable<ShortTransactionDomain> categoryTransactions = _dbContext.Transactions
                 .Where(t =>
