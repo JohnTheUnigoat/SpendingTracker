@@ -233,5 +233,19 @@ namespace BL.Services.Impl
                 })
                 .SingleAsync();
         }
+
+        public async Task DeleteTransaction(int transactionId)
+        {
+            TransactionBase transaction = new CategoryTransaction
+            {
+                Id = transactionId
+            };
+
+            _dbContext.Attach(transaction);
+
+            _dbContext.Remove(transaction);
+
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -13,6 +13,8 @@ namespace BL.Services
 
         Task<int> AddTransactionAsync(AddUpdateTransactionDtoBase dto);
 
-        Task<TransactionDomain> UpdateTransaction(int transactionid, AddUpdateTransactionDtoBase dto);
+        Task<TransactionDomain> UpdateTransaction(int transactionId, AddUpdateTransactionDtoBase dto);
+
+        Task DeleteTransaction(int transactionId);
     }
 }
