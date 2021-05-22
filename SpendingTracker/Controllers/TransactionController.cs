@@ -1,4 +1,6 @@
-﻿using BL.Services;
+﻿using BL.Model.Transaction;
+using BL.Services;
+using Core.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +32,29 @@ namespace SpendingTracker.Controllers
         [HttpPost]
         public async Task<int> AddTransaction(int walletId, [FromBody] AddTransactionRequest request)
         {
-            return await _transactionService.AddTransactionAsync(request.ToDto(walletId));
+            if (request.TargetWalletId.HasValue && request.CategoryId.HasValue)
+            {
+                throw new ValidationException(new()
+                {
+                    {
+                        nameof(request.TargetWalletId),
+                        $"Only one of the fields {nameof(request.TargetWalletId)}, {nameof(request.CategoryId)} should have a value."
+                    },
+                    {
+                        nameof(request.CategoryId),
+                        $"Only one of the fields {nameof(request.TargetWalletId)}, {nameof(request.CategoryId)} should have a value."
+                    },
+                });
+            }
+
+            AddTransactionDtoBase dto;
+
+            if (request.CategoryId.HasValue)
+                dto = request.ToCategoryDto(walletId);
+            else
+                dto = request.ToWalletDto(walletId);
+
+            return await _transactionService.AddTransactionAsync(dto);
         }
     }
 }
