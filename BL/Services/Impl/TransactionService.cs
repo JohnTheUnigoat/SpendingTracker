@@ -23,23 +23,12 @@ namespace BL.Services.Impl
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<ShortTransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
+        private (DateTime from, DateTime to) GetReportPeriodLimits(string reportPeriod)
         {
-            Wallet wallet = _dbContext.Wallets.Find(dto.WalletId);
-
-            if (wallet == null)
-            {
-                throw new HttpStatusException(404);
-            }
-
             DateTime currDate = DateTime.Today;
 
             DateTime fromDate;
             DateTime toDate;
-
-            string reportPeriod = string.IsNullOrEmpty(dto.ReportPeriod) ?
-                wallet.DefaultReportPeriod :
-                dto.ReportPeriod;
 
             switch (reportPeriod)
             {
@@ -65,11 +54,26 @@ namespace BL.Services.Impl
                     fromDate = new DateTime(0);
                     toDate = currDate;
                     break;
-                default: throw new ValidationException(new()
-                {
-                    { nameof(dto.ReportPeriod), $"reportPeriod value should be one of: {string.Join(", ", ReportPeriods.GetValues())}." }
-                });
+                default: throw new ArgumentException($"reportPeriod value should be one of: {string.Join(", ", ReportPeriods.GetValues())}.");
             }
+
+            return (fromDate, toDate);
+        }
+
+        public async Task<IEnumerable<ShortTransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
+        {
+            Wallet wallet = _dbContext.Wallets.Find(dto.WalletId);
+
+            if (wallet == null)
+            {
+                throw new HttpStatusException(404);
+            }
+
+            string reportPeriod = string.IsNullOrEmpty(dto.ReportPeriod) ?
+                wallet.DefaultReportPeriod :
+                dto.ReportPeriod;
+
+            var (fromDate, toDate) = GetReportPeriodLimits(reportPeriod);
 
             IQueryable<ShortTransactionDomain> categoryTransactions = _dbContext.Transactions
                 .Where(t =>
