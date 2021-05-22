@@ -61,7 +61,7 @@ namespace BL.Services.Impl
             return (fromDate, toDate);
         }
 
-        public async Task<IEnumerable<ShortTransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
+        public async Task<List<ShortTransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
         {
             Wallet wallet = _dbContext.Wallets.Find(dto.WalletId);
 

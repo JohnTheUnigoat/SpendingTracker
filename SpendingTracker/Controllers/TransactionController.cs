@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Mappers;
 using SpendingTracker.Models.Transaction.Request;
+using SpendingTracker.Models.Transaction.Response;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SpendingTracker.Controllers
@@ -19,6 +21,14 @@ namespace SpendingTracker.Controllers
         public TransactionController(ITransactionService transactionService)
         {
             _transactionService = transactionService;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<TransactionResponse>> GetTransactions(int walletId, [FromQuery] GetTransactionRequest request)
+        {
+            List<ShortTransactionDomain> domains = await _transactionService.GetTransactionsAsync(request.ToDto(walletId));
+
+            return domains.AllToResponse();
         }
 
         [HttpPost]
