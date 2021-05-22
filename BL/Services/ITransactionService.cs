@@ -9,7 +9,7 @@ namespace BL.Services
 {
     public interface ITransactionService
     {
-        Task<List<ShortTransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto);
+        Task<List<TransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto);
 
         Task<int> AddTransactionAsync(AddTransactionDtoBase dto);
     }

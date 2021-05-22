@@ -26,7 +26,7 @@ namespace SpendingTracker.Controllers
         [HttpGet]
         public async Task<IEnumerable<TransactionResponse>> GetTransactions(int walletId, [FromQuery] GetTransactionRequest request)
         {
-            List<ShortTransactionDomain> domains = await _transactionService.GetTransactionsAsync(request.ToDto(walletId));
+            List<TransactionDomain> domains = await _transactionService.GetTransactionsAsync(request.ToDto(walletId));
 
             return domains.AllToResponse();
         }

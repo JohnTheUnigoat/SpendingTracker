@@ -1,4 +1,6 @@
-﻿namespace SpendingTracker.Models.Transaction.Request
+﻿using System;
+
+namespace SpendingTracker.Models.Transaction.Request
 {
     public class AddTransactionRequest
     {
@@ -7,5 +9,7 @@
         public int? TargetWalletId { get; set; }
 
         public int? CategoryId { get; set; }
+
+        public DateTime? ManualTimestamp { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace BL.Services.Impl
                     break;
                 case ReportPeriods.AllTime:
                     fromDate = new DateTime(0);
-                    toDate = currDate;
+                    toDate = DateTime.Now;
                     break;
                 case ReportPeriods.Custom: throw new ArgumentException("A custom report period can't be automatically determined.");
                 default: throw new ArgumentException($"reportPeriod value should be one of: {string.Join(", ", ReportPeriods.GetValues())}.");
@@ -61,7 +61,7 @@ namespace BL.Services.Impl
             return (fromDate, toDate);
         }
 
-        public async Task<List<ShortTransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
+        public async Task<List<TransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
         {
             Wallet wallet = _dbContext.Wallets.Find(dto.WalletId);
 
@@ -93,11 +93,11 @@ namespace BL.Services.Impl
                 }
             }
 
-            IQueryable<ShortTransactionDomain> categoryTransactions = _dbContext.Transactions
+            IQueryable<TransactionDomain> categoryTransactions = _dbContext.Transactions
                 .Where(t =>
                     t is CategoryTransaction &&
                     t.WalletId == dto.WalletId)
-                .Select(t => new ShortTransactionDomain
+                .Select(t => new TransactionDomain
                 {
                     Id = t.Id,
                     Amount = t.Amount,
@@ -105,11 +105,11 @@ namespace BL.Services.Impl
                     Timestamp = t.TimeStamp
                 });
 
-            IQueryable<ShortTransactionDomain> outgoingWalletTransaction = _dbContext.Transactions
+            IQueryable<TransactionDomain> outgoingWalletTransaction = _dbContext.Transactions
                 .Where(t =>
                     t is WalletTransaction &&
                     t.WalletId == dto.WalletId)
-                .Select(t => new ShortTransactionDomain
+                .Select(t => new TransactionDomain
                 {
                     Id = t.Id,
                     Amount = t.Amount,
@@ -117,11 +117,11 @@ namespace BL.Services.Impl
                     Timestamp = t.TimeStamp
                 });
 
-            IQueryable<ShortTransactionDomain> incomingWalletTransaction = _dbContext.Transactions
+            IQueryable<TransactionDomain> incomingWalletTransaction = _dbContext.Transactions
                 .Where(t =>
                     t is WalletTransaction &&
                     (t as WalletTransaction).TargetWalletId == dto.WalletId)
-                .Select(t => new ShortTransactionDomain
+                .Select(t => new TransactionDomain
                 {
                     Id = t.Id,
                     Amount = t.Amount * -1,
@@ -129,7 +129,7 @@ namespace BL.Services.Impl
                     Timestamp = t.TimeStamp
                 });
 
-            List<ShortTransactionDomain> res = await
+            List<TransactionDomain> res = await
                 categoryTransactions
                     .Union(outgoingWalletTransaction)
                     .Union(incomingWalletTransaction)
@@ -179,7 +179,7 @@ namespace BL.Services.Impl
                 default: throw new ArgumentException("Unknown/unhandled addTransactionDto type.");
             }
 
-            newTransaction.TimeStamp = DateTime.Now;
+            newTransaction.TimeStamp = dto.ManualTimestamp ?? DateTime.Now;
 
             _dbContext.Transactions.Add(newTransaction);
 

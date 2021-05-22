@@ -14,6 +14,7 @@ namespace SpendingTracker.Mappers
             {
                 WalletId = walletId,
                 Amount = request.Amount,
+                ManualTimestamp = request.ManualTimestamp,
                 CaterodyId = request.CategoryId.Value
             };
 
@@ -23,6 +24,7 @@ namespace SpendingTracker.Mappers
             {
                 WalletId = walletId,
                 Amount = request.Amount,
+                ManualTimestamp = request.ManualTimestamp,
                 TargetWalletId = request.TargetWalletId.Value
             };
 
@@ -34,7 +36,7 @@ namespace SpendingTracker.Mappers
             CustomToDate = request.To
         };
 
-        public static TransactionResponse ToResponse(this ShortTransactionDomain domain) => new TransactionResponse
+        public static TransactionResponse ToResponse(this TransactionDomain domain) => new TransactionResponse
         {
             Id = domain.Id,
             Target = domain.Target,
@@ -42,7 +44,7 @@ namespace SpendingTracker.Mappers
             Timestamp = domain.Timestamp
         };
 
-        public static List<TransactionResponse> AllToResponse(this IEnumerable<ShortTransactionDomain> domains) =>
+        public static List<TransactionResponse> AllToResponse(this IEnumerable<TransactionDomain> domains) =>
             domains.Select(d => d.ToResponse()).ToList();
     }
 }

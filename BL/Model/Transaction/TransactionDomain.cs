@@ -2,7 +2,7 @@
 
 namespace BL.Model.Transaction
 {
-    public class ShortTransactionDomain
+    public class TransactionDomain
     {
         public int Id { get; set; }
 
