@@ -32,7 +32,7 @@ namespace BL.Services.Impl
                 throw new HttpStatusException(404);
             }
 
-            DateTime currDate = DateTime.Now;
+            DateTime currDate = DateTime.Today;
 
             DateTime fromDate;
             DateTime toDate;
@@ -44,28 +44,26 @@ namespace BL.Services.Impl
             switch (reportPeriod)
             {
                 case ReportPeriods.CurrentDay:
-                    toDate = new DateTime(currDate.Year, currDate.Month, currDate.Day);
-                    fromDate = toDate.AddHours(24);
+                    fromDate = currDate;
+                    toDate = fromDate.AddHours(24);
                     break;
                 case ReportPeriods.CurrentWeek:
-                    toDate = new DateTime(
-                        currDate.Year,
-                        currDate.Month,
-                        currDate.Day + (7 - (int)currDate.DayOfWeek));
+                    var weekStart = DayOfWeek.Monday;
 
-                    fromDate = toDate.AddDays(-7);
+                    fromDate = currDate.AddDays(-(int)currDate.DayOfWeek + (int)weekStart);
+                    toDate = fromDate.AddDays(7);
                     break;
                 case ReportPeriods.CurrentMonth:
-                    toDate = new DateTime(currDate.Year, currDate.Month + 1, 1);
-                    fromDate = toDate.AddMonths(-1);
+                    fromDate = currDate.AddDays(-currDate.Day + 1);
+                    toDate = fromDate.AddMonths(1);
                     break;
                 case ReportPeriods.CurrentYear:
-                    toDate = new DateTime(currDate.Year + 1, 1, 1);
-                    fromDate = toDate.AddYears(-1);
+                    fromDate = new DateTime(currDate.Year, 1, 1);
+                    toDate = fromDate.AddYears(1);
                     break;
                 case ReportPeriods.AllTime:
-                    toDate = currDate;
                     fromDate = new DateTime(0);
+                    toDate = currDate;
                     break;
                 default: throw new ValidationException(new()
                 {
@@ -75,7 +73,7 @@ namespace BL.Services.Impl
 
             List<ShortTransactionDomain> res = await _dbContext.Transactions
                 .Where(t =>
-                    t.SourceWalletId == dto.WalletId &&
+                    t.WalletId == dto.WalletId &&
                     t.TimeStamp >= fromDate &&
                     t.TimeStamp < toDate)
                 .Select(t => new ShortTransactionDomain

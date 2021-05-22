@@ -44,9 +44,9 @@ namespace DAL_EF
                 .HasDefaultValue(ReportPeriods.CurrentMonth);
 
             modelBuilder.Entity<TransactionBase>()
-                .HasOne(t => t.SourceWallet)
+                .HasOne(t => t.Wallet)
                 .WithMany()
-                .HasForeignKey(t => t.SourceWalletId)
+                .HasForeignKey(t => t.WalletId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CategoryTransaction>()

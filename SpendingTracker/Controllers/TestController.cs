@@ -28,18 +28,18 @@ namespace SpendingTracker.Controllers
         [HttpGet]
         public async Task<ActionResult> GetTest()
         {
-            var res = await _transactionService.GetTransactionsAsync(new GetTransactionsDto
-            {
-                WalletId = 5,
-                //ReportPeriod = ReportPeriods.CurrentYear
-            });
-
-            //var res = await _transactionService.AddTransactionAsync(new AddCategoryTransactionDto
+            //var res = await _transactionService.GetTransactionsAsync(new GetTransactionsDto
             //{
-            //    Amount = -420.69m,
-            //    CaterodyId = 15,
-            //    WalletId = 5
+            //    WalletId = 5,
+            //    //ReportPeriod = ReportPeriods.CurrentYear
             //});
+
+            var res = await _transactionService.AddTransactionAsync(new AddCategoryTransactionDto
+            {
+                Amount = -420.69m,
+                CaterodyId = 15,
+                WalletId = 5
+            });
 
             return Ok(res);
         }

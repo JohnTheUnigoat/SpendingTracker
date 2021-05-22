@@ -8,14 +8,14 @@ namespace BL.Mappers
         public static CategoryTransaction ToEntity(this AddCategoryTransactionDto dto) => new CategoryTransaction
         {
             Amount = dto.Amount,
-            SourceWalletId = dto.WalletId,
+            WalletId = dto.WalletId,
             CategoryId = dto.CaterodyId
         };
 
         public static WalletTransaction ToEntity(this AddWalletTransactionDto dto) => new WalletTransaction
         {
             Amount = dto.Amount,
-            SourceWalletId = dto.WalletId,
+            WalletId = dto.WalletId,
             TargetWalletId = dto.TargetWalletId
         };
     }
