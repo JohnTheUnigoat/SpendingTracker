@@ -54,6 +54,7 @@ namespace BL.Services.Impl
                     fromDate = new DateTime(0);
                     toDate = currDate;
                     break;
+                case ReportPeriods.Custom: throw new ArgumentException("A custom report period can't be automatically determined.");
                 default: throw new ArgumentException($"reportPeriod value should be one of: {string.Join(", ", ReportPeriods.GetValues())}.");
             }
 
@@ -75,13 +76,21 @@ namespace BL.Services.Impl
 
             DateTime fromDate, toDate;
 
-            try
+            if (reportPeriod == ReportPeriods.Custom)
             {
-                (fromDate, toDate) = GetReportPeriodLimits(reportPeriod);
+                fromDate = dto.CustomFromDate.Value;
+                toDate = dto.CustomToDate.Value;
             }
-            catch (ArgumentException e)
+            else
             {
-                throw new ValidationException(new() { { nameof(dto.ReportPeriod), e.Message } });
+                try
+                {
+                    (fromDate, toDate) = GetReportPeriodLimits(reportPeriod);
+                }
+                catch (ArgumentException e)
+                {
+                    throw new ValidationException(new() { { nameof(dto.ReportPeriod), e.Message } });
+                }
             }
 
             IQueryable<ShortTransactionDomain> categoryTransactions = _dbContext.Transactions

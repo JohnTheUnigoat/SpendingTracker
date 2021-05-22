@@ -9,6 +9,7 @@ namespace Core.Const
         public const string CurrentMonth = "curr_month";
         public const string CurrentYear = "curr_year";
         public const string AllTime = "all_time";
+        public const string Custom = "custom";
 
         public static string GetText(string reportPeriod)
         {
@@ -19,6 +20,7 @@ namespace Core.Const
                 case CurrentMonth: return "Current month";
                 case CurrentYear: return "Current year";
                 case AllTime: return "All time";
+                case Custom: return "Custom";
                 default: throw new ArgumentException("reportPeriod should be one of the ReportPeriods constants.");
             }
         }
@@ -27,7 +29,7 @@ namespace Core.Const
         {
             return new[]
             {
-                CurrentDay, CurrentWeek, CurrentMonth, CurrentYear, AllTime
+                CurrentDay, CurrentWeek, CurrentMonth, CurrentYear, AllTime, Custom
             };
         }
     }
