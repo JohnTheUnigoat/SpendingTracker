@@ -71,20 +71,48 @@ namespace BL.Services.Impl
                 });
             }
 
-            List<ShortTransactionDomain> res = await _dbContext.Transactions
+            IQueryable<ShortTransactionDomain> categoryTransactions = _dbContext.Transactions
                 .Where(t =>
-                    t.WalletId == dto.WalletId &&
-                    t.TimeStamp >= fromDate &&
-                    t.TimeStamp < toDate)
+                    t is CategoryTransaction &&
+                    t.WalletId == dto.WalletId)
                 .Select(t => new ShortTransactionDomain
                 {
                     Id = t.Id,
                     Amount = t.Amount,
-                    Target = (t is CategoryTransaction) ?
-                        (t as CategoryTransaction).Category.Name :
-                        (t as WalletTransaction).TargetWallet.Name,
+                    Target = (t as CategoryTransaction).Category.Name,
                     Timestamp = t.TimeStamp
-                })
+                });
+
+            IQueryable<ShortTransactionDomain> outgoingWalletTransaction = _dbContext.Transactions
+                .Where(t =>
+                    t is WalletTransaction &&
+                    t.WalletId == dto.WalletId)
+                .Select(t => new ShortTransactionDomain
+                {
+                    Id = t.Id,
+                    Amount = t.Amount,
+                    Target = (t as WalletTransaction).TargetWallet.Name,
+                    Timestamp = t.TimeStamp
+                });
+
+            IQueryable<ShortTransactionDomain> incomingWalletTransaction = _dbContext.Transactions
+                .Where(t =>
+                    t is WalletTransaction &&
+                    (t as WalletTransaction).TargetWalletId == dto.WalletId)
+                .Select(t => new ShortTransactionDomain
+                {
+                    Id = t.Id,
+                    Amount = t.Amount * -1,
+                    Target = t.Wallet.Name,
+                    Timestamp = t.TimeStamp
+                });
+
+            List<ShortTransactionDomain> res = await
+                categoryTransactions
+                    .Union(outgoingWalletTransaction)
+                    .Union(incomingWalletTransaction)
+                    .Where(t => t.Timestamp >= fromDate && t.Timestamp < toDate)
+                    .OrderBy(t => t.Timestamp)
                 .ToListAsync();
 
             return res;
@@ -120,6 +148,9 @@ namespace BL.Services.Impl
                             { nameof(dto.Amount), "Transaction amount can't be negative when transfering to a wallet." }
                         });
                     }
+
+                    // Make the amount negative to indicate that money was removed from this wallet and transfered to a different one
+                    walletDto.Amount *= -1;
 
                     newTransaction = walletDto.ToEntity();
                     break;
