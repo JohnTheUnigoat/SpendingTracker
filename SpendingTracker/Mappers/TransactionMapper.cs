@@ -25,7 +25,7 @@ namespace SpendingTracker.Mappers
                 WalletId = walletId,
                 Amount = request.Amount,
                 ManualTimestamp = request.ManualTimestamp,
-                TargetWalletId = request.TargetWalletId.Value
+                SourceWalletId = request.SourceWalletId.Value
             };
 
         public static GetTransactionsDto ToDto(this GetTransactionRequest request, int walletId) => new GetTransactionsDto

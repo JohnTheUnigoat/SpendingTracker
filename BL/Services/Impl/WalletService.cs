@@ -3,6 +3,7 @@ using BL.Model.Wallet;
 using Core.Exceptions;
 using DAL_EF;
 using DAL_EF.Entity;
+using DAL_EF.Entity.Transaction;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,9 +71,18 @@ namespace BL.Services.Impl
 
         public async Task<bool> IsTransactionInWalletAsync(int walletId, int transactionId)
         {
-            return await _dbContext.Transactions
-                .Where(t => t.Id == transactionId && t.WalletId == walletId)
-                .AnyAsync();
+            TransactionBase transaction = await _dbContext.Transactions.FindAsync(transactionId);
+
+            if (transaction == null) return false;
+
+            if (transaction is WalletTransaction)
+            {
+                WalletTransaction wt = transaction as WalletTransaction;
+
+                return wt.WalletId == walletId || wt.SourceWalletId == walletId;
+            }
+
+            return transaction.WalletId == walletId;
         }
     }
 }

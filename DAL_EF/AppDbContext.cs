@@ -56,9 +56,9 @@ namespace DAL_EF
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<WalletTransaction>()
-                .HasOne(t => t.TargetWallet)
+                .HasOne(t => t.SourceWallet)
                 .WithMany()
-                .HasForeignKey(t => t.TargetWalletId)
+                .HasForeignKey(t => t.SourceWalletId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);

@@ -2,6 +2,7 @@
 using BL.Model.Transaction;
 using Core.Const;
 using Core.Exceptions;
+using Core.Exceptions.CustomExceptions;
 using DAL_EF;
 using DAL_EF.Entity;
 using DAL_EF.Entity.Transaction;
@@ -113,14 +114,14 @@ namespace BL.Services.Impl
                 {
                     Id = t.Id,
                     Amount = t.Amount,
-                    Target = (t as WalletTransaction).TargetWallet.Name,
+                    Target = (t as WalletTransaction).SourceWallet.Name,
                     Timestamp = t.TimeStamp
                 });
 
             IQueryable<TransactionDomain> incomingWalletTransaction = _dbContext.Transactions
                 .Where(t =>
                     t is WalletTransaction &&
-                    (t as WalletTransaction).TargetWalletId == dto.WalletId)
+                    (t as WalletTransaction).SourceWalletId == dto.WalletId)
                 .Select(t => new TransactionDomain
                 {
                     Id = t.Id,
@@ -140,7 +141,7 @@ namespace BL.Services.Impl
             return res;
         }
 
-        public async Task<int> AddTransactionAsync(AddUpdateTransactionDtoBase dto)
+        private void ValidateTransactionDto(AddUpdateTransactionDtoBase dto)
         {
             if (dto.Amount == 0)
             {
@@ -150,10 +151,23 @@ namespace BL.Services.Impl
                 });
             }
 
-            if (_dbContext.Wallets.Any(w => w.Id == dto.WalletId) == false)
+            if (dto is AddUpdateWalletTransactionDto)
             {
-                throw new HttpStatusException(404);
+                var wDto = dto as AddUpdateWalletTransactionDto;
+
+                if (wDto.WalletId == wDto.SourceWalletId)
+                {
+                    throw new ValidationException(new()
+                    {
+                        { nameof(wDto.SourceWalletId), "Source wallet can not be the same as the wallet transaction belongs to." }
+                    });
+                }
             }
+        }
+
+        public async Task<int> AddTransactionAsync(AddUpdateTransactionDtoBase dto)
+        {
+            ValidateTransactionDto(dto);
 
             TransactionBase newTransaction;
 
@@ -163,17 +177,6 @@ namespace BL.Services.Impl
                     newTransaction = categoryDto.ToEntity();
                     break;
                 case AddUpdateWalletTransactionDto walletDto:
-                    if (walletDto.Amount < 0)
-                    {
-                        throw new ValidationException(new()
-                        {
-                            { nameof(dto.Amount), "Transaction amount can't be negative when transfering to a wallet." }
-                        });
-                    }
-
-                    // Make the amount negative to indicate that money was removed from this wallet and transfered to a different one
-                    walletDto.Amount *= -1;
-
                     newTransaction = walletDto.ToEntity();
                     break;
                 default: throw new ArgumentException("Unknown/unhandled addTransactionDto type.");
@@ -190,19 +193,21 @@ namespace BL.Services.Impl
 
         public async Task<TransactionDomain> UpdateTransaction(int transactionId, AddUpdateTransactionDtoBase dto)
         {
+            ValidateTransactionDto(dto);
+
             TransactionBase transaction = _dbContext.Transactions.Find(transactionId);
 
-            if (transaction == null)
+            if (dto is AddUpdateCategoryTransactionDto && transaction is WalletTransaction ||
+                dto is AddUpdateWalletTransactionDto && transaction is CategoryTransaction)
             {
-                throw new HttpStatusException(404);
+                throw new AttemptedChangeOfTransactionTypeException();
             }
 
             transaction.Amount = dto.Amount;
+            transaction.WalletId = dto.WalletId;
 
             if (dto.ManualTimestamp != null)
                 transaction.TimeStamp = dto.ManualTimestamp.Value;
-
-            TransactionBase replacementTransaction;
 
             switch (transaction)
             {
@@ -210,9 +215,9 @@ namespace BL.Services.Impl
                     var cDto = dto as AddUpdateCategoryTransactionDto;
                     ct.CategoryId = cDto.CaterodyId;
                     break;
-                case WalletTransaction ct:
+                case WalletTransaction wt:
                     var wDto = dto as AddUpdateWalletTransactionDto;
-                    ct.TargetWalletId = wDto.TargetWalletId;
+                    wt.SourceWalletId = wDto.SourceWalletId;
                     break;
                 default: throw new NotImplementedException(
                     "Updating for this transaction type is not implemented (or something went wrong)");
@@ -228,7 +233,7 @@ namespace BL.Services.Impl
                     Amount = t.Amount,
                     Target = (t is CategoryTransaction) ?
                         (t as CategoryTransaction).Category.Name :
-                        (t as WalletTransaction).TargetWallet.Name,
+                        (t as WalletTransaction).SourceWallet.Name,
                     Timestamp = t.TimeStamp
                 })
                 .SingleAsync();

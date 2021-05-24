@@ -16,7 +16,7 @@ namespace BL.Mappers
         {
             Amount = dto.Amount,
             WalletId = dto.WalletId,
-            TargetWalletId = dto.TargetWalletId
+            SourceWalletId = dto.SourceWalletId
         };
     }
 }
