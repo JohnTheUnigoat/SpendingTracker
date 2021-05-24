@@ -63,7 +63,7 @@ namespace SpendingTracker.Controllers
             return await _transactionService.AddTransactionAsync(dto);
         }
 
-        [HttpPut]
+        [HttpPut("{transactionId:int}")]
         public async Task<TransactionResponse> UpdateTransaction(
             int walletId, int transactionId, [FromBody] AddUpdateTransactionRequest request)
         {
@@ -97,7 +97,7 @@ namespace SpendingTracker.Controllers
             return (await _transactionService.UpdateTransaction(transactionId, dto)).ToResponse();
         }
 
-        [HttpDelete]
+        [HttpDelete("{transactionId:int}")]
         public async Task DeleteTransaction(int walletId, int transactionId)
         {
             if (await _walletService.IsTransactionInWalletAsync(walletId, transactionId) == false)
