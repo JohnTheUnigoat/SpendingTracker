@@ -19,9 +19,9 @@ namespace BL.Services.Impl
             _dbContext = dbContext;
         }
 
-        public async Task<int> AddCategoryAsync(AddCategoryDto dto)
+        public async Task<int> AddCategoryAsync(AddUpdateCategoryDto dto, int userId)
         {
-            var newCategory = dto.ToEntity();
+            var newCategory = dto.ToEntity(userId);
 
             _dbContext.Categories.Add(newCategory);
 
@@ -63,11 +63,12 @@ namespace BL.Services.Impl
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task RenameCategory(int categoryId, string name)
+        public async Task UpdateCategory(int categoryId, AddUpdateCategoryDto dto)
         {
             Category category = await _dbContext.Categories.FindAsync(categoryId);
 
-            category.Name = name;
+            category.Name = dto.CategoryName;
+            category.IsIncome = dto.IsIncome;
 
             await _dbContext.SaveChangesAsync();
         }

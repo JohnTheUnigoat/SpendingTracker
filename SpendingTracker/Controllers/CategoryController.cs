@@ -33,18 +33,18 @@ namespace SpendingTracker.Controllers
         [HttpPost]
         public async Task<int> AddCategory([FromBody] AddUpdateCategoryRequest request)
         {
-            return await _categoryService.AddCategoryAsync(request.ToDto(UserId));
+            return await _categoryService.AddCategoryAsync(request.ToDto(), UserId);
         }
 
         [HttpPut("{categoryId:int}")]
-        public async Task RenameCategory(int categoryId, [FromBody] AddUpdateCategoryRequest request)
+        public async Task UpdateCategory(int categoryId, [FromBody] AddUpdateCategoryRequest request)
         {
             if(await _categoryService.IsUserAuthorizedForCategoryAsync(categoryId, UserId) == false)
             {
                 throw new HttpStatusException(404);
             }
 
-            await _categoryService.RenameCategory(categoryId, request.Name);
+            await _categoryService.UpdateCategory(categoryId, request.ToDto());
         }
 
         [HttpDelete("{categoryId:int}")]

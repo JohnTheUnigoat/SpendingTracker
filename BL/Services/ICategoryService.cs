@@ -8,11 +8,11 @@ namespace BL.Services
     {
         Task<bool> IsUserAuthorizedForCategoryAsync(int categoryId, int userId);
 
-        Task<int> AddCategoryAsync(AddCategoryDto dto);
+        Task<int> AddCategoryAsync(AddUpdateCategoryDto dto, int userId);
 
         Task<CategoriesDomain> GetCategoriesAsync(int userId);
 
-        Task RenameCategory(int categoryId, string name);
+        Task UpdateCategory(int categoryId, AddUpdateCategoryDto dto);
 
         Task DeleteCategory(int categoryId);
     }
