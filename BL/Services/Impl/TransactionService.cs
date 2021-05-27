@@ -246,8 +246,6 @@ namespace BL.Services.Impl
                 Id = transactionId
             };
 
-            _dbContext.Attach(transaction);
-
             _dbContext.Remove(transaction);
 
             await _dbContext.SaveChangesAsync();

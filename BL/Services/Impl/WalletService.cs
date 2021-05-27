@@ -22,7 +22,7 @@ namespace BL.Services.Impl
 
         public async Task<bool> IsUserAuthorizedForWalletAsync(int walletId, int userId)
         {
-            Wallet wallet = await _dbContext.Wallets.FindAsync(walletId);
+            Wallet wallet = await _dbContext.Wallets.AsNoTracking().SingleOrDefaultAsync(w => w.Id == walletId);
 
             if (wallet == null)
             {
@@ -83,6 +83,32 @@ namespace BL.Services.Impl
             }
 
             return transaction.WalletId == walletId;
+        }
+
+        public async Task DeleteWalletAsync(int walletId)
+        {
+            var wallet = new Wallet
+            {
+                Id = walletId
+            };
+
+            Task<int[]> transactionIdsToRemoveTask = _dbContext.Transactions
+                .Where(t =>
+                    t.WalletId == walletId ||
+                    t is WalletTransaction && (t as WalletTransaction).SourceWalletId == walletId)
+                .Select(t => t.Id ).ToArrayAsync();
+
+            _dbContext.Transactions.RemoveRange((await transactionIdsToRemoveTask).Select(id => new CategoryTransaction { Id = id }));
+
+            Task<int[]> categoriesToRemoveTask = _dbContext.Categories
+                .Where(c => c.WalletId == walletId)
+                .Select(c => c.Id).ToArrayAsync();
+
+            _dbContext.Categories.RemoveRange((await categoriesToRemoveTask).Select(id => new Category { Id = id }));
+
+            _dbContext.Remove(wallet);
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

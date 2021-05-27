@@ -41,5 +41,11 @@ namespace SpendingTracker.Controllers
         {
             await _walletService.RenameWalletAsync(walletId, request.Name);
         }
+
+        [HttpDelete("{walletId:int}")]
+        public async Task DeleteWallet(int walletId)
+        {
+            await _walletService.DeleteWalletAsync(walletId);
+        }
     }
 }
