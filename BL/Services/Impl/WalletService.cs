@@ -79,7 +79,7 @@ namespace BL.Services.Impl
             {
                 WalletTransaction wt = transaction as WalletTransaction;
 
-                return wt.WalletId == walletId || wt.SourceWalletId == walletId;
+                return wt.WalletId == walletId || wt.OtherWalletId == walletId;
             }
 
             return transaction.WalletId == walletId;
@@ -95,7 +95,7 @@ namespace BL.Services.Impl
             Task<int[]> transactionIdsToRemoveTask = _dbContext.Transactions
                 .Where(t =>
                     t.WalletId == walletId ||
-                    t is WalletTransaction && (t as WalletTransaction).SourceWalletId == walletId)
+                    t is WalletTransaction && (t as WalletTransaction).OtherWalletId == walletId)
                 .Select(t => t.Id ).ToArrayAsync();
 
             _dbContext.Transactions.RemoveRange((await transactionIdsToRemoveTask).Select(id => new CategoryTransaction { Id = id }));

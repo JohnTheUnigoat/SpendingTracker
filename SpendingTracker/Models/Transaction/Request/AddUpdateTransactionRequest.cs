@@ -6,7 +6,7 @@ namespace SpendingTracker.Models.Transaction.Request
     {
         public decimal Amount { get; set; }
 
-        public int? SourceWalletId { get; set; }
+        public int? OtherWalletId { get; set; }
 
         public int? CategoryId { get; set; }
 

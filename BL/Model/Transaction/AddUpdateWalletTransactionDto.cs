@@ -2,6 +2,6 @@
 {
     public class AddUpdateWalletTransactionDto : AddUpdateTransactionDtoBase
     {
-        public int SourceWalletId { get; set; }
+        public int OtherWalletId { get; set; }
     }
 }

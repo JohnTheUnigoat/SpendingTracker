@@ -117,15 +117,15 @@ namespace BL.Services.Impl
                     Id = t.Id,
                     Amount = t.Amount,
                     CategoryId = null,
-                    OtherWalletId = (t as WalletTransaction).SourceWalletId,
-                    TargetLabel = (t as WalletTransaction).SourceWallet.Name,
+                    OtherWalletId = (t as WalletTransaction).OtherWalletId,
+                    TargetLabel = (t as WalletTransaction).OtherWallet.Name,
                     Timestamp = t.TimeStamp
                 });
 
             IQueryable<TransactionDomain> incomingWalletTransaction = _dbContext.Transactions
                 .Where(t =>
                     t is WalletTransaction &&
-                    (t as WalletTransaction).SourceWalletId == dto.WalletId)
+                    (t as WalletTransaction).OtherWalletId == dto.WalletId)
                 .Select(t => new TransactionDomain
                 {
                     Id = t.Id,
@@ -161,11 +161,11 @@ namespace BL.Services.Impl
             {
                 var wDto = dto as AddUpdateWalletTransactionDto;
 
-                if (wDto.WalletId == wDto.SourceWalletId)
+                if (wDto.WalletId == wDto.OtherWalletId)
                 {
                     throw new ValidationException(new()
                     {
-                        { nameof(wDto.SourceWalletId), "Source wallet can not be the same as the wallet transaction belongs to." }
+                        { nameof(wDto.OtherWalletId), "Source wallet can not be the same as the wallet transaction belongs to." }
                     });
                 }
             }
@@ -223,7 +223,7 @@ namespace BL.Services.Impl
                     break;
                 case WalletTransaction wt:
                     var wDto = dto as AddUpdateWalletTransactionDto;
-                    wt.SourceWalletId = wDto.SourceWalletId;
+                    wt.OtherWalletId = wDto.OtherWalletId;
                     break;
                 default: throw new NotImplementedException(
                     "Updating for this transaction type is not implemented (or something went wrong)");
@@ -239,7 +239,7 @@ namespace BL.Services.Impl
                     Amount = t.Amount,
                     TargetLabel = (t is CategoryTransaction) ?
                         (t as CategoryTransaction).Category.Name :
-                        (t as WalletTransaction).SourceWallet.Name,
+                        (t as WalletTransaction).OtherWallet.Name,
                     Timestamp = t.TimeStamp
                 })
                 .SingleAsync();

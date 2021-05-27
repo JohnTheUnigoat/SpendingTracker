@@ -2,8 +2,8 @@
 {
     public class WalletTransaction : TransactionBase
     {
-        public int SourceWalletId { get; set; }
+        public int OtherWalletId { get; set; }
 
-        public Wallet SourceWallet { get; set; }
+        public Wallet OtherWallet { get; set; }
     }
 }

@@ -38,17 +38,17 @@ namespace SpendingTracker.Controllers
         [HttpPost]
         public async Task<int> AddTransaction(int walletId, [FromBody] AddUpdateTransactionRequest request)
         {
-            if (request.SourceWalletId.HasValue && request.CategoryId.HasValue)
+            if (request.OtherWalletId.HasValue && request.CategoryId.HasValue)
             {
                 throw new ValidationException(new()
                 {
                     {
-                        nameof(request.SourceWalletId),
-                        $"Only one of the fields {nameof(request.SourceWalletId)}, {nameof(request.CategoryId)} should have a value."
+                        nameof(request.OtherWalletId),
+                        $"Only one of the fields {nameof(request.OtherWalletId)}, {nameof(request.CategoryId)} should have a value."
                     },
                     {
                         nameof(request.CategoryId),
-                        $"Only one of the fields {nameof(request.SourceWalletId)}, {nameof(request.CategoryId)} should have a value."
+                        $"Only one of the fields {nameof(request.OtherWalletId)}, {nameof(request.CategoryId)} should have a value."
                     },
                 });
             }
@@ -72,17 +72,17 @@ namespace SpendingTracker.Controllers
                 throw new HttpStatusException(404);
             }
 
-            if (request.SourceWalletId.HasValue && request.CategoryId.HasValue)
+            if (request.OtherWalletId.HasValue && request.CategoryId.HasValue)
             {
                 throw new ValidationException(new()
                 {
                     {
-                        nameof(request.SourceWalletId),
-                        $"Only one of the fields {nameof(request.SourceWalletId)}, {nameof(request.CategoryId)} should have a value."
+                        nameof(request.OtherWalletId),
+                        $"Only one of the fields {nameof(request.OtherWalletId)}, {nameof(request.CategoryId)} should have a value."
                     },
                     {
                         nameof(request.CategoryId),
-                        $"Only one of the fields {nameof(request.SourceWalletId)}, {nameof(request.CategoryId)} should have a value."
+                        $"Only one of the fields {nameof(request.OtherWalletId)}, {nameof(request.CategoryId)} should have a value."
                     },
                 });
             }

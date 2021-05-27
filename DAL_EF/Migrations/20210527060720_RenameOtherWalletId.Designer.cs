@@ -4,14 +4,16 @@ using DAL_EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DAL_EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210527060720_RenameOtherWalletId")]
+    partial class RenameOtherWalletId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,13 +219,13 @@ namespace DAL_EF.Migrations
 
             modelBuilder.Entity("DAL_EF.Entity.Transaction.WalletTransaction", b =>
                 {
-                    b.HasOne("DAL_EF.Entity.Wallet", "OtherWallet")
+                    b.HasOne("DAL_EF.Entity.Wallet", "SourceWallet")
                         .WithMany()
                         .HasForeignKey("OtherWalletId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("OtherWallet");
+                    b.Navigation("SourceWallet");
                 });
 
             modelBuilder.Entity("DAL_EF.Entity.User", b =>

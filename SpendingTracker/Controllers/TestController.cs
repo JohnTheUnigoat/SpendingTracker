@@ -44,7 +44,7 @@ namespace SpendingTracker.Controllers
             var res = await _transactionService.UpdateTransaction(transactionId, new AddUpdateWalletTransactionDto
             {
                 Amount = 134,
-                SourceWalletId = 3,
+                OtherWalletId = 3,
                 WalletId = walletId
             });
 
