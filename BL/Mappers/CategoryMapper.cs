@@ -9,7 +9,8 @@ namespace BL.Mappers
         public static Category ToEntity(this AddCategoryDto dto) => new Category
         {
             Name = dto.CategoryName,
-            WalletId = dto.WalletId
+            IsIncome = dto.IsIncome,
+            UserId = dto.UserId
         };
     }
 }

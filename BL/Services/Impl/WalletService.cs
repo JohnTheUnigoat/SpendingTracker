@@ -100,12 +100,6 @@ namespace BL.Services.Impl
 
             _dbContext.Transactions.RemoveRange((await transactionIdsToRemoveTask).Select(id => new CategoryTransaction { Id = id }));
 
-            Task<int[]> categoriesToRemoveTask = _dbContext.Categories
-                .Where(c => c.WalletId == walletId)
-                .Select(c => c.Id).ToArrayAsync();
-
-            _dbContext.Categories.RemoveRange((await categoriesToRemoveTask).Select(id => new Category { Id = id }));
-
             _dbContext.Remove(wallet);
 
             await _dbContext.SaveChangesAsync();

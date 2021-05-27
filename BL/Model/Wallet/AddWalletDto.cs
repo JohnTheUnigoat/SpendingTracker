@@ -7,8 +7,6 @@ namespace BL.Model.Wallet
     {
         public string Name { get; set; }
 
-        public IEnumerable<string> Categories { get; set; }
-
         public int UserId { get; set; }
     }
 }

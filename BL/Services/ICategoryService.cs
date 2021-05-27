@@ -6,11 +6,11 @@ namespace BL.Services
 {
     public interface ICategoryService
     {
+        Task<bool> IsUserAuthorizedForCategoryAsync(int categoryId, int userId);
+
         Task<int> AddCategoryAsync(AddCategoryDto dto);
 
-        Task<IEnumerable<CategoryDomain>> GetCategoriesAsync(int walletId);
-
-        Task<bool> IsCategoryInWallet(int categoryId, int walletId);
+        Task<CategoriesDomain> GetCategoriesAsync(int userId);
 
         Task RenameCategory(int categoryId, string name);
 

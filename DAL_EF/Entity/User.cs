@@ -21,6 +21,8 @@ namespace DAL_EF.Entity
 
         public UserSettings Settings { get; set; }
 
+        public ICollection<Category> Categories { get; set; }
+
         public ICollection<Wallet> Wallets { get; set; }
     }
 }

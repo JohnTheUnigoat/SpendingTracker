@@ -22,7 +22,6 @@ namespace SpendingTracker.Mappers
         public static AddWalletDto ToDto(this AddWalletRequest request, int userId) => new AddWalletDto
         {
             Name = request.Name,
-            Categories = request.Categories,
             UserId = userId
         };
     }

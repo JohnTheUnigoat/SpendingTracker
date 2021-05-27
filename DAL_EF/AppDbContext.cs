@@ -27,15 +27,14 @@ namespace DAL_EF
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<User>()
+                .HasMany(u => u.Categories)
+                .WithOne()
+                .HasForeignKey(c => c.UserId);
+
+            modelBuilder.Entity<User>()
                 .HasMany(us => us.Wallets)
                 .WithOne()
                 .HasForeignKey(w => w.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Wallet>()
-                .HasMany(w => w.Categories)
-                .WithOne()
-                .HasForeignKey(c => c.WalletId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Wallet>()

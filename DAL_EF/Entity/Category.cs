@@ -6,6 +6,8 @@
 
         public string Name { get; set; }
 
-        public int WalletId { get; set; }
+        public bool IsIncome { get; set; }
+
+        public int UserId { get; set; }
     }
 }

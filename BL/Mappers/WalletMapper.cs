@@ -9,12 +9,6 @@ namespace BL.Mappers
         public static Wallet ToEntity(this AddWalletDto dto) => new Wallet
         {
             Name = dto.Name,
-            Categories = dto.Categories
-                .Select(name => new Category
-                {
-                    Name = name
-                })
-                .ToList(),
             UserId = dto.UserId
         };
     }

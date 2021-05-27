@@ -19,10 +19,17 @@ namespace SpendingTracker.Mappers
                 .Select(d => d.ToResponse())
                 .ToList();
 
-        public static AddCategoryDto ToDto(this AddUpdateCategoryRequest request, int walletId) => new AddCategoryDto
+        public static CategoriesResponse ToResponse(this CategoriesDomain domain) => new CategoriesResponse
         {
-            WalletId = walletId,
-            CategoryName = request.Name
+            Income = domain.Income.AllToResponse(),
+            Expense = domain.Expense.AllToResponse()
+        };
+
+        public static AddCategoryDto ToDto(this AddUpdateCategoryRequest request, int userId) => new AddCategoryDto
+        {
+            CategoryName = request.Name,
+            IsIncome = request.IsIncome,
+            UserId = userId
         };
     }
 }

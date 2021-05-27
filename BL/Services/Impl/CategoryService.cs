@@ -30,23 +30,23 @@ namespace BL.Services.Impl
             return newCategory.Id;
         }
 
-        public async Task<IEnumerable<CategoryDomain>> GetCategoriesAsync(int walletId)
+        public async Task<CategoriesDomain> GetCategoriesAsync(int userId)
         {
-            return await _dbContext.Categories
-                .Where(c => c.WalletId == walletId)
+            List<CategoryDomain> categories = await _dbContext.Categories
+                .Where(c => c.UserId == userId)
                 .Select(c => new CategoryDomain
                 {
                     Id = c.Id,
-                    Name = c.Name
+                    Name = c.Name,
+                    IsIncome = c.IsIncome
                 })
                 .ToListAsync();
-        }
 
-        public async Task<bool> IsCategoryInWallet(int categoryId, int walletId)
-        {
-            return await _dbContext.Categories
-                .Where(c => c.Id == categoryId && c.WalletId == walletId)
-                .AnyAsync();
+            return new CategoriesDomain
+            {
+                Income = categories.Where(c => c.IsIncome).ToList(),
+                Expense = categories.Where(c => c.IsIncome == false).ToList()
+            };
         }
 
         public async Task DeleteCategory(int categoryId)
@@ -70,6 +70,11 @@ namespace BL.Services.Impl
             category.Name = name;
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsUserAuthorizedForCategoryAsync(int categoryId, int userId)
+        {
+            return await _dbContext.Categories.AnyAsync(c => c.Id == categoryId && c.UserId == userId);
         }
     }
 }

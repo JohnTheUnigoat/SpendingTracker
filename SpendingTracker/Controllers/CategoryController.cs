@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SpendingTracker.Controllers
 {
-    [Route("api/wallets/{walletId:int}/categories")]
+    [Route("api/categories")]
     [ApiController]
     [Authorize]
     public class CategoryController : BaseController
@@ -25,21 +25,21 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<CategoryResponse>> GetCategories(int walletId)
+        public async Task<CategoriesResponse> GetCategories()
         {
-            return (await _categoryService.GetCategoriesAsync(walletId)).AllToResponse();
+            return (await _categoryService.GetCategoriesAsync(UserId)).ToResponse();
         }
 
         [HttpPost]
-        public async Task<int> AddCategory(int walletId, [FromBody] AddUpdateCategoryRequest request)
+        public async Task<int> AddCategory([FromBody] AddUpdateCategoryRequest request)
         {
-            return await _categoryService.AddCategoryAsync(request.ToDto(walletId));
+            return await _categoryService.AddCategoryAsync(request.ToDto(UserId));
         }
 
         [HttpPut("{categoryId:int}")]
-        public async Task RenameCategory(int walletId, int categoryId, [FromBody] AddUpdateCategoryRequest request)
+        public async Task RenameCategory(int categoryId, [FromBody] AddUpdateCategoryRequest request)
         {
-            if(await _categoryService.IsCategoryInWallet(categoryId, walletId) == false)
+            if(await _categoryService.IsUserAuthorizedForCategoryAsync(categoryId, UserId) == false)
             {
                 throw new HttpStatusException(404);
             }
@@ -48,9 +48,9 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpDelete("{categoryId:int}")]
-        public async Task DeleteCategory(int walletId, int categoryId)
+        public async Task DeleteCategory(int categoryId)
         {
-            if (await _categoryService.IsCategoryInWallet(categoryId, walletId) == false)
+            if (await _categoryService.IsUserAuthorizedForCategoryAsync(categoryId, UserId) == false)
             {
                 throw new HttpStatusException(404);
             }
