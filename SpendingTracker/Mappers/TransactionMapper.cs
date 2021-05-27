@@ -39,7 +39,9 @@ namespace SpendingTracker.Mappers
         public static TransactionResponse ToResponse(this TransactionDomain domain) => new TransactionResponse
         {
             Id = domain.Id,
-            Target = domain.Target,
+            CategoryId = domain.CategoryId,
+            OtherWalletId = domain.OtherWalletId,
+            TargetLabel = domain.TargetLabel,
             Amount = domain.Amount,
             Timestamp = domain.Timestamp
         };

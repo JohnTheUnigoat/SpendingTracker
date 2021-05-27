@@ -102,7 +102,9 @@ namespace BL.Services.Impl
                 {
                     Id = t.Id,
                     Amount = t.Amount,
-                    Target = (t as CategoryTransaction).Category.Name,
+                    CategoryId = (t as CategoryTransaction).CategoryId,
+                    OtherWalletId = null,
+                    TargetLabel = (t as CategoryTransaction).Category.Name,
                     Timestamp = t.TimeStamp
                 });
 
@@ -114,7 +116,9 @@ namespace BL.Services.Impl
                 {
                     Id = t.Id,
                     Amount = t.Amount,
-                    Target = (t as WalletTransaction).SourceWallet.Name,
+                    CategoryId = null,
+                    OtherWalletId = (t as WalletTransaction).SourceWalletId,
+                    TargetLabel = (t as WalletTransaction).SourceWallet.Name,
                     Timestamp = t.TimeStamp
                 });
 
@@ -126,7 +130,9 @@ namespace BL.Services.Impl
                 {
                     Id = t.Id,
                     Amount = t.Amount * -1,
-                    Target = t.Wallet.Name,
+                    CategoryId = null,
+                    OtherWalletId = t.WalletId,
+                    TargetLabel = t.Wallet.Name,
                     Timestamp = t.TimeStamp
                 });
 
@@ -231,7 +237,7 @@ namespace BL.Services.Impl
                 {
                     Id = t.Id,
                     Amount = t.Amount,
-                    Target = (t is CategoryTransaction) ?
+                    TargetLabel = (t is CategoryTransaction) ?
                         (t as CategoryTransaction).Category.Name :
                         (t as WalletTransaction).SourceWallet.Name,
                     Timestamp = t.TimeStamp
