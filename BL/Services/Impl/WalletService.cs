@@ -71,7 +71,9 @@ namespace BL.Services.Impl
 
         public async Task<bool> IsTransactionInWalletAsync(int walletId, int transactionId)
         {
-            TransactionBase transaction = await _dbContext.Transactions.FindAsync(transactionId);
+            TransactionBase transaction = await _dbContext.Transactions
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id == transactionId);
 
             if (transaction == null) return false;
 

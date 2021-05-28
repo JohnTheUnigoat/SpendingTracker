@@ -217,13 +217,13 @@ namespace DAL_EF.Migrations
 
             modelBuilder.Entity("DAL_EF.Entity.Transaction.WalletTransaction", b =>
                 {
-                    b.HasOne("DAL_EF.Entity.Wallet", "OtherWallet")
+                    b.HasOne("DAL_EF.Entity.Wallet", "SourceWallet")
                         .WithMany()
                         .HasForeignKey("OtherWalletId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("OtherWallet");
+                    b.Navigation("SourceWallet");
                 });
 
             modelBuilder.Entity("DAL_EF.Entity.User", b =>

@@ -147,7 +147,7 @@ namespace BL.Services.Impl
             return res;
         }
 
-        private void ValidateTransactionDto(AddUpdateTransactionDtoBase dto)
+        private async Task ValidateTransactionDtoAsync(AddUpdateTransactionDtoBase dto)
         {
             if (dto.Amount == 0)
             {
@@ -155,6 +155,31 @@ namespace BL.Services.Impl
                 {
                     { nameof(dto.Amount), "Transaction amount can't be 0." }
                 });
+            }
+
+            if (dto is AddUpdateCategoryTransactionDto)
+            {
+                var cDto = dto as AddUpdateCategoryTransactionDto;
+
+                var targetCategory = await _dbContext.Categories
+                    .AsNoTracking()
+                    .FirstAsync(c => c.Id == cDto.CaterodyId);
+
+                if (targetCategory.IsIncome && cDto.Amount < 0)
+                {
+                    throw new ValidationException(new()
+                    {
+                        { nameof(cDto.Amount), "The transaction value should be positive for an income category." }
+                    });
+                }
+
+                if (targetCategory.IsIncome == false && cDto.Amount > 0)
+                {
+                    throw new ValidationException(new()
+                    {
+                        { nameof(cDto.Amount), "The transaction value should be negative for an expense category." }
+                    });
+                }
             }
 
             if (dto is AddUpdateWalletTransactionDto)
@@ -173,7 +198,7 @@ namespace BL.Services.Impl
 
         public async Task<int> AddTransactionAsync(AddUpdateTransactionDtoBase dto)
         {
-            ValidateTransactionDto(dto);
+            await ValidateTransactionDtoAsync(dto);
 
             TransactionBase newTransaction;
 
@@ -199,7 +224,7 @@ namespace BL.Services.Impl
 
         public async Task<TransactionDomain> UpdateTransaction(int transactionId, AddUpdateTransactionDtoBase dto)
         {
-            ValidateTransactionDto(dto);
+            await ValidateTransactionDtoAsync(dto);
 
             TransactionBase transaction = _dbContext.Transactions.Find(transactionId);
 
@@ -247,6 +272,8 @@ namespace BL.Services.Impl
 
         public async Task DeleteTransaction(int transactionId)
         {
+            var thing = _dbContext.ChangeTracker.Entries();
+
             TransactionBase transaction = new CategoryTransaction
             {
                 Id = transactionId
