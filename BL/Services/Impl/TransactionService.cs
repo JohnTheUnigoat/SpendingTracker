@@ -24,12 +24,25 @@ namespace BL.Services.Impl
             _dbContext = dbContext;
         }
 
-        private (DateTime from, DateTime to) GetReportPeriodLimits(string reportPeriod)
+        private async Task<(DateTime from, DateTime to)> GetReportPeriodLimitsAsync(GetTransactionsDto dto)
         {
+            string defaultReportPeriod = await _dbContext.Wallets
+                .Where(w => w.Id == dto.WalletId)
+                .Select(w => w.DefaultReportPeriod)
+                .FirstAsync();
+
+            string reportPeriod = string.IsNullOrEmpty(dto.ReportPeriod) ?
+                defaultReportPeriod :
+                dto.ReportPeriod;
+
+            if (reportPeriod == ReportPeriods.Custom)
+            {
+                return (dto.CustomFromDate.Value, dto.CustomToDate.Value);
+            }
+
             DateTime currDate = DateTime.Today;
 
-            DateTime fromDate;
-            DateTime toDate;
+            DateTime fromDate, toDate;
 
             switch (reportPeriod)
             {
@@ -64,34 +77,15 @@ namespace BL.Services.Impl
 
         public async Task<List<TransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
         {
-            Wallet wallet = _dbContext.Wallets.Find(dto.WalletId);
-
-            if (wallet == null)
-            {
-                throw new HttpStatusException(404);
-            }
-
-            string reportPeriod = string.IsNullOrEmpty(dto.ReportPeriod) ?
-                wallet.DefaultReportPeriod :
-                dto.ReportPeriod;
-
             DateTime fromDate, toDate;
 
-            if (reportPeriod == ReportPeriods.Custom)
+            try
             {
-                fromDate = dto.CustomFromDate.Value;
-                toDate = dto.CustomToDate.Value;
+                (fromDate, toDate) = await GetReportPeriodLimitsAsync(dto);
             }
-            else
+            catch (ArgumentException e)
             {
-                try
-                {
-                    (fromDate, toDate) = GetReportPeriodLimits(reportPeriod);
-                }
-                catch (ArgumentException e)
-                {
-                    throw new ValidationException(new() { { nameof(dto.ReportPeriod), e.Message } });
-                }
+                throw new ValidationException(new() { { nameof(dto.ReportPeriod), e.Message } });
             }
 
             IQueryable<TransactionDomain> categoryTransactions = _dbContext.Transactions
@@ -222,7 +216,7 @@ namespace BL.Services.Impl
             return newTransaction.Id;
         }
 
-        public async Task<TransactionDomain> UpdateTransaction(int transactionId, AddUpdateTransactionDtoBase dto)
+        public async Task<TransactionDomain> UpdateTransactionAsync(int transactionId, AddUpdateTransactionDtoBase dto)
         {
             await ValidateTransactionDtoAsync(dto);
 
@@ -270,7 +264,7 @@ namespace BL.Services.Impl
                 .SingleAsync();
         }
 
-        public async Task DeleteTransaction(int transactionId)
+        public async Task DeleteTransactionAsync(int transactionId)
         {
             var thing = _dbContext.ChangeTracker.Entries();
 
@@ -282,6 +276,38 @@ namespace BL.Services.Impl
             _dbContext.Remove(transaction);
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<ShortTransactionSummaryDomain> GetShortSummaryAsync(GetTransactionsDto dto)
+        {
+            DateTime fromDate, toDate;
+
+            try
+            {
+                (fromDate, toDate) = await GetReportPeriodLimitsAsync(dto);
+            }
+            catch (ArgumentException e)
+            {
+                throw new ValidationException(new() { { nameof(dto.ReportPeriod), e.Message } });
+            }
+
+            IQueryable<decimal> inWalletQueryAmounts = _dbContext.Transactions
+                .Where(t => t.WalletId == dto.WalletId)
+                .Select(t => t.Amount);
+
+            IQueryable<decimal> otherWalletsQueryAmounts = _dbContext.Transactions
+                .Where(t =>
+                    t is WalletTransaction &&
+                    (t as WalletTransaction).OtherWalletId == dto.WalletId)
+                .Select(t => t.Amount * -1);
+
+            IQueryable<decimal> allAmounts = inWalletQueryAmounts.Union(otherWalletsQueryAmounts);
+
+            return new ShortTransactionSummaryDomain
+            {
+                Income = await allAmounts.Where(a => a < 0).SumAsync(),
+                Expense = await allAmounts.Where(a => a > 0).SumAsync()
+            };
         }
     }
 }

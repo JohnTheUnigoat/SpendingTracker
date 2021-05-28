@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Mappers;
 using SpendingTracker.Models.Transaction.Request;
 using SpendingTracker.Models.Transaction.Response;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -33,6 +34,12 @@ namespace SpendingTracker.Controllers
             List<TransactionDomain> domains = await _transactionService.GetTransactionsAsync(request.ToDto(walletId));
 
             return domains.AllToResponse();
+        }
+
+        [HttpGet("summary")]
+        public async Task<ShortTransactionSummaryDomain> GetTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
+        {
+            return await _transactionService.GetShortSummaryAsync(request.ToDto(walletId));
         }
 
         [HttpPost]
@@ -94,7 +101,7 @@ namespace SpendingTracker.Controllers
             else
                 dto = request.ToWalletDto(walletId);
 
-            return (await _transactionService.UpdateTransaction(transactionId, dto)).ToResponse();
+            return (await _transactionService.UpdateTransactionAsync(transactionId, dto)).ToResponse();
         }
 
         [HttpDelete("{transactionId:int}")]
@@ -105,7 +112,7 @@ namespace SpendingTracker.Controllers
                 throw new HttpStatusException(404);
             }
 
-            await _transactionService.DeleteTransaction(transactionId);
+            await _transactionService.DeleteTransactionAsync(transactionId);
         }
     }
 }

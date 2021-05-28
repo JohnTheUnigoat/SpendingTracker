@@ -11,10 +11,12 @@ namespace BL.Services
     {
         Task<List<TransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto);
 
+        Task<ShortTransactionSummaryDomain> GetShortSummaryAsync(GetTransactionsDto dto);
+
         Task<int> AddTransactionAsync(AddUpdateTransactionDtoBase dto);
 
-        Task<TransactionDomain> UpdateTransaction(int transactionId, AddUpdateTransactionDtoBase dto);
+        Task<TransactionDomain> UpdateTransactionAsync(int transactionId, AddUpdateTransactionDtoBase dto);
 
-        Task DeleteTransaction(int transactionId);
+        Task DeleteTransactionAsync(int transactionId);
     }
 }
