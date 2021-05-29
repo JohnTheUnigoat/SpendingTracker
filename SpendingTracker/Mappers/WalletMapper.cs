@@ -11,7 +11,8 @@ namespace SpendingTracker.Mappers
         public static WalletResponse ToResponse(this WalletDomain domain) => new WalletResponse
         {
             Id = domain.Id,
-            Name = domain.Name
+            Name = domain.Name,
+            DefaultReportPeriod = domain.DefaultReportPeriod
         };
 
         public static IEnumerable<WalletResponse> AllToResponse(

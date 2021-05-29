@@ -39,7 +39,8 @@ namespace BL.Services.Impl
                 .Select(w => new WalletDomain
                 {
                     Id = w.Id,
-                    Name = w.Name
+                    Name = w.Name,
+                    DefaultReportPeriod = w.DefaultReportPeriod
                 })
                 .ToListAsync();
         }
