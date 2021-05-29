@@ -292,13 +292,16 @@ namespace BL.Services.Impl
             }
 
             IQueryable<decimal> inWalletQueryAmounts = _dbContext.Transactions
-                .Where(t => t.WalletId == dto.WalletId)
+                .Where(t =>
+                    t.WalletId == dto.WalletId &&
+                    t.TimeStamp >= fromDate && t.TimeStamp < toDate)
                 .Select(t => t.Amount);
 
             IQueryable<decimal> otherWalletsQueryAmounts = _dbContext.Transactions
                 .Where(t =>
                     t is WalletTransaction &&
-                    (t as WalletTransaction).OtherWalletId == dto.WalletId)
+                    (t as WalletTransaction).OtherWalletId == dto.WalletId &&
+                    t.TimeStamp >= fromDate && t.TimeStamp < toDate)
                 .Select(t => t.Amount * -1);
 
             IQueryable<decimal> allAmounts = inWalletQueryAmounts.Union(otherWalletsQueryAmounts);
