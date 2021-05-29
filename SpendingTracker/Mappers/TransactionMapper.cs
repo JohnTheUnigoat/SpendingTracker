@@ -56,5 +56,34 @@ namespace SpendingTracker.Mappers
                 Income = domain.Income,
                 Expense = domain.Expense
             };
+
+        public static CategoryOrWalletSummaryResponse ToResponse(
+            this CategoryOrWalletSummaryDomain domain) => new CategoryOrWalletSummaryResponse
+            {
+                Id = domain.Id,
+                Name = domain.Name,
+                Amount = domain.Amount
+            };
+
+        public static IEnumerable<CategoryOrWalletSummaryResponse> AllToResponse(
+            this IEnumerable<CategoryOrWalletSummaryDomain> domains) => domains
+            .Select(d => d.ToResponse())
+            .ToList();
+
+        public static OneWaySummaryResponse ToResponse(
+            this OneWaySummaryDomain domain) => new OneWaySummaryResponse
+            {
+                Categories = domain.Categories.AllToResponse(),
+                Wallets = domain.Wallets.AllToResponse()
+            };
+
+        public static TransactionSummaryResponse ToResponse(
+            this TransactionSummaryDomain domain) => new TransactionSummaryResponse
+            {
+                TotalIncome = domain.TotalIncome,
+                TotalExpense = domain.TotalExpense,
+                IncomeDetails = domain.IncomeDetails.ToResponse(),
+                ExpenseDetails = domain.ExpenseDetails.ToResponse()
+            };
     }
 }

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Mappers;
 using SpendingTracker.Models.Transaction.Request;
 using SpendingTracker.Models.Transaction.Response;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -43,9 +42,9 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpGet("summary")]
-        public async Task<TransactionSummaryDomain> GetTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
+        public async Task<TransactionSummaryResponse> GetTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
         {
-            return await _transactionService.GetSummaryAsync(request.ToDto(walletId));
+            return (await _transactionService.GetSummaryAsync(request.ToDto(walletId))).ToResponse();
         }
 
         [HttpPost]

@@ -118,8 +118,8 @@ namespace BL.Services.Impl
                     Timestamp = t.TimeStamp
                 });
 
-            IQueryable<TransactionDomain> outgoingWalletTransaction = transactions
-                .Where(t => t is WalletTransaction)
+            IQueryable<TransactionDomain> nativeWalletTransactions = transactions
+                .Where(t => t is WalletTransaction && t.WalletId == dto.WalletId)
                 .Select(t => new TransactionDomain
                 {
                     Id = t.Id,
@@ -130,10 +130,8 @@ namespace BL.Services.Impl
                     Timestamp = t.TimeStamp
                 });
 
-            IQueryable<TransactionDomain> incomingWalletTransaction = transactions
-                .Where(t =>
-                    t is WalletTransaction &&
-                    (t as WalletTransaction).OtherWalletId == dto.WalletId)
+            IQueryable<TransactionDomain> relatedWalletTransactions = transactions
+                .Where(t => t is WalletTransaction && t.WalletId != dto.WalletId)
                 .Select(t => new TransactionDomain
                 {
                     Id = t.Id,
@@ -146,8 +144,8 @@ namespace BL.Services.Impl
 
             List<TransactionDomain> res = await
                 categoryTransactions
-                    .Union(outgoingWalletTransaction)
-                    .Union(incomingWalletTransaction)
+                    .Union(nativeWalletTransactions)
+                    .Union(relatedWalletTransactions)
                     .OrderBy(t => t.Timestamp)
                 .ToListAsync();
 
@@ -348,40 +346,34 @@ namespace BL.Services.Impl
                 .Where(t => t is WalletTransaction && t.WalletId == dto.WalletId)
                 .Select(t => new
                 {
-                    (t as WalletTransaction).OtherWalletId,
-                    (t as WalletTransaction).OtherWallet.Name,
-                    t.Amount
-                })
-                .GroupBy(x => new { x.OtherWalletId, x.Name })
-                .Select(g => new
-                {
-                    WalletId = g.Key.OtherWalletId as int?,
-                    CategoryId = null as int?,
-                    g.Key.Name,
-                    Amount = g.Sum(x => x.Amount)
+                    WalletId = (t as WalletTransaction).OtherWalletId,
+                    Name = (t as WalletTransaction).OtherWallet.Name,
+                    Amount = t.Amount
                 });
 
             var relatedWalletInfos = transactions
                 .Where(t => t.WalletId != dto.WalletId)
                 .Select(t => new
                 {
-                    t.WalletId,
-                    t.Wallet.Name,
-                    t.Amount
-                })
+                    WalletId = t.WalletId,
+                    Name = t.Wallet.Name,
+                    Amount = t.Amount * -1
+                });
+
+            var walletInfos = nativeWalletInfos
+                .Union(relatedWalletInfos)
                 .GroupBy(x => new { x.WalletId, x.Name })
                 .Select(g => new
                 {
                     WalletId = g.Key.WalletId as int?,
                     CategoryId = null as int?,
                     g.Key.Name,
-                    Amount = g.Sum(x => x.Amount) * -1
+                    Amount = g.Sum(x => x.Amount)
                 })
-                .Where(i => i.Amount != 0);
+                .Where(x => x.Amount != 0);
 
             var allInfos = await categoryInfos
-                .Union(nativeWalletInfos)
-                .Union(relatedWalletInfos)
+                .Union(walletInfos)
                 .ToListAsync();
 
             var categoryIncomes = allInfos
@@ -428,12 +420,12 @@ namespace BL.Services.Impl
                 TotalExpense = allInfos
                     .Where(i => i.Amount < 0)
                     .Sum(i => i.Amount),
-                IncomeDetails = new OneWayTransactionSummaryDomain
+                IncomeDetails = new OneWaySummaryDomain
                 {
                     Categories = categoryIncomes,
                     Wallets = walletIncomes
                 },
-                ExpenseDetails = new OneWayTransactionSummaryDomain
+                ExpenseDetails = new OneWaySummaryDomain
                 {
                     Categories = categoryExpenses,
                     Wallets = walletExpenses

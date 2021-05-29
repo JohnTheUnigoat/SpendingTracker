@@ -2,7 +2,7 @@
 
 namespace BL.Model.Transaction
 {
-    public class OneWayTransactionSummaryDomain
+    public class OneWaySummaryDomain
     {
         public IEnumerable<CategoryOrWalletSummaryDomain> Categories { get; set; }
 
