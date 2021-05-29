@@ -48,5 +48,13 @@ namespace SpendingTracker.Mappers
 
         public static List<TransactionResponse> AllToResponse(this IEnumerable<TransactionDomain> domains) =>
             domains.Select(d => d.ToResponse()).ToList();
+
+
+        public static ShortTransactionSummaryResponse ToResponse(
+            this ShortTransactionSummaryDomain domain) => new ShortTransactionSummaryResponse
+            {
+                Income = domain.Income,
+                Expense = domain.Expense
+            };
     }
 }

@@ -37,9 +37,9 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpGet("summary")]
-        public async Task<ShortTransactionSummaryDomain> GetTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
+        public async Task<ShortTransactionSummaryResponse> GetTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
         {
-            return await _transactionService.GetShortSummaryAsync(request.ToDto(walletId));
+            return (await _transactionService.GetShortSummaryAsync(request.ToDto(walletId))).ToResponse();
         }
 
         [HttpPost]

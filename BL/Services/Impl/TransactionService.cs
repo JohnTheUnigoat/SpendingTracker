@@ -305,8 +305,8 @@ namespace BL.Services.Impl
 
             return new ShortTransactionSummaryDomain
             {
-                Income = await allAmounts.Where(a => a < 0).SumAsync(),
-                Expense = await allAmounts.Where(a => a > 0).SumAsync()
+                Income = await allAmounts.Where(a => a > 0).SumAsync(),
+                Expense = await allAmounts.Where(a => a < 0).SumAsync()
             };
         }
     }
