@@ -42,6 +42,19 @@ namespace DAL_EF
                 .IsRequired(true)
                 .HasDefaultValue(ReportPeriods.CurrentMonth);
 
+            modelBuilder.Entity<Wallet>()
+                .HasMany(w => w.WalletAllowedUsers)
+                .WithOne()
+                .HasForeignKey(wu => wu.WalletId);
+
+            modelBuilder.Entity<WalletAllowedUser>()
+                .HasKey(wu => new { wu.WalletId, wu.UserId });
+
+            modelBuilder.Entity<WalletAllowedUser>()
+                .HasOne(wu => wu.User)
+                .WithMany()
+                .HasForeignKey(wu => wu.UserId);
+
             modelBuilder.Entity<TransactionBase>()
                 .HasOne(t => t.Wallet)
                 .WithMany()

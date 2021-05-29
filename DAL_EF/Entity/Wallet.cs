@@ -11,5 +11,7 @@ namespace DAL_EF.Entity
         public int UserId { get; set; }
 
         public string DefaultReportPeriod { get; set; }
+
+        public ICollection<WalletAllowedUser> WalletAllowedUsers { get; set; }
     }
 }
