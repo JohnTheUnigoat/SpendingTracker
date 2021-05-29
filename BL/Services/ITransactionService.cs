@@ -13,6 +13,8 @@ namespace BL.Services
 
         Task<ShortTransactionSummaryDomain> GetShortSummaryAsync(GetTransactionsDto dto);
 
+        Task<TransactionSummaryDomain> GetSummaryAsync(GetTransactionsDto dto);
+
         Task<int> AddTransactionAsync(AddUpdateTransactionDtoBase dto);
 
         Task<TransactionDomain> UpdateTransactionAsync(int transactionId, AddUpdateTransactionDtoBase dto);

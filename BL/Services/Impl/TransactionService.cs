@@ -4,13 +4,11 @@ using Core.Const;
 using Core.Exceptions;
 using Core.Exceptions.CustomExceptions;
 using DAL_EF;
-using DAL_EF.Entity;
 using DAL_EF.Entity.Transaction;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BL.Services.Impl
@@ -24,18 +22,17 @@ namespace BL.Services.Impl
             _dbContext = dbContext;
         }
 
-        private async Task<(DateTime from, DateTime to)> GetReportPeriodLimitsAsync(GetTransactionsDto dto)
+        private async Task<string> GetDefaultReportPriod(int walletId)
         {
-            string defaultReportPeriod = await _dbContext.Wallets
-                .Where(w => w.Id == dto.WalletId)
+            return await _dbContext.Wallets
+                .Where(w => w.Id == walletId)
                 .Select(w => w.DefaultReportPeriod)
                 .FirstAsync();
+        }
 
-            string reportPeriod = string.IsNullOrEmpty(dto.ReportPeriod) ?
-                defaultReportPeriod :
-                dto.ReportPeriod;
-
-            if (reportPeriod == ReportPeriods.Custom)
+        private (DateTime from, DateTime to) GetReportPeriodLimits(GetTransactionsDto dto)
+        {
+            if (dto.ReportPeriod == ReportPeriods.Custom)
             {
                 return (dto.CustomFromDate.Value, dto.CustomToDate.Value);
             }
@@ -44,7 +41,7 @@ namespace BL.Services.Impl
 
             DateTime fromDate, toDate;
 
-            switch (reportPeriod)
+            switch (dto.ReportPeriod)
             {
                 case ReportPeriods.CurrentDay:
                     fromDate = currDate;
@@ -75,23 +72,42 @@ namespace BL.Services.Impl
             return (fromDate, toDate);
         }
 
-        public async Task<List<TransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
+        /// <summary>
+        /// Gets an IQueryable with all transactions, filtered by report period and being related to walletId specified in GetTransactionsDto
+        /// </summary>
+        private IQueryable<TransactionBase> GetFilteredTransactions(GetTransactionsDto dto)
         {
             DateTime fromDate, toDate;
 
             try
             {
-                (fromDate, toDate) = await GetReportPeriodLimitsAsync(dto);
+                (fromDate, toDate) = GetReportPeriodLimits(dto);
             }
             catch (ArgumentException e)
             {
                 throw new ValidationException(new() { { nameof(dto.ReportPeriod), e.Message } });
             }
 
-            IQueryable<TransactionDomain> categoryTransactions = _dbContext.Transactions
+            var transactionsInPeriod = _dbContext.Transactions
+                .Where(t => t.TimeStamp >= fromDate && t.TimeStamp < toDate);
+
+            var inWalletTransactions = transactionsInPeriod
+                .Where(t => t.WalletId == dto.WalletId);
+
+            var otherWalletTransactions = transactionsInPeriod
                 .Where(t =>
-                    t is CategoryTransaction &&
-                    t.WalletId == dto.WalletId)
+                    t is WalletTransaction &&
+                    (t as WalletTransaction).OtherWalletId == dto.WalletId);
+
+            return inWalletTransactions.Union(otherWalletTransactions);
+        }
+
+        public async Task<List<TransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
+        {
+            var transactions = GetFilteredTransactions(dto);
+
+            IQueryable<TransactionDomain> categoryTransactions = transactions
+                .Where(t => t is CategoryTransaction)
                 .Select(t => new TransactionDomain
                 {
                     Id = t.Id,
@@ -102,10 +118,8 @@ namespace BL.Services.Impl
                     Timestamp = t.TimeStamp
                 });
 
-            IQueryable<TransactionDomain> outgoingWalletTransaction = _dbContext.Transactions
-                .Where(t =>
-                    t is WalletTransaction &&
-                    t.WalletId == dto.WalletId)
+            IQueryable<TransactionDomain> outgoingWalletTransaction = transactions
+                .Where(t => t is WalletTransaction)
                 .Select(t => new TransactionDomain
                 {
                     Id = t.Id,
@@ -116,7 +130,7 @@ namespace BL.Services.Impl
                     Timestamp = t.TimeStamp
                 });
 
-            IQueryable<TransactionDomain> incomingWalletTransaction = _dbContext.Transactions
+            IQueryable<TransactionDomain> incomingWalletTransaction = transactions
                 .Where(t =>
                     t is WalletTransaction &&
                     (t as WalletTransaction).OtherWalletId == dto.WalletId)
@@ -134,7 +148,6 @@ namespace BL.Services.Impl
                 categoryTransactions
                     .Union(outgoingWalletTransaction)
                     .Union(incomingWalletTransaction)
-                    .Where(t => t.Timestamp >= fromDate && t.Timestamp < toDate)
                     .OrderBy(t => t.Timestamp)
                 .ToListAsync();
 
@@ -280,36 +293,151 @@ namespace BL.Services.Impl
 
         public async Task<ShortTransactionSummaryDomain> GetShortSummaryAsync(GetTransactionsDto dto)
         {
-            DateTime fromDate, toDate;
+            var transactions = GetFilteredTransactions(dto);
 
-            try
-            {
-                (fromDate, toDate) = await GetReportPeriodLimitsAsync(dto);
-            }
-            catch (ArgumentException e)
-            {
-                throw new ValidationException(new() { { nameof(dto.ReportPeriod), e.Message } });
-            }
-
-            IQueryable<decimal> inWalletQueryAmounts = _dbContext.Transactions
-                .Where(t =>
-                    t.WalletId == dto.WalletId &&
-                    t.TimeStamp >= fromDate && t.TimeStamp < toDate)
+            var categoryAmounts = transactions
+                .Where(t => t is CategoryTransaction)
                 .Select(t => t.Amount);
 
-            IQueryable<decimal> otherWalletsQueryAmounts = _dbContext.Transactions
-                .Where(t =>
-                    t is WalletTransaction &&
-                    (t as WalletTransaction).OtherWalletId == dto.WalletId &&
-                    t.TimeStamp >= fromDate && t.TimeStamp < toDate)
-                .Select(t => t.Amount * -1);
+            var walletAmounts = transactions
+                .Where(t => t is WalletTransaction)
+                .Select(t => new
+                {
+                    walletId = t.WalletId == dto.WalletId ?
+                        (t as WalletTransaction).OtherWalletId :
+                        t.WalletId,
+                    amount = t.WalletId == dto.WalletId ?
+                        t.Amount :
+                        t.Amount * -1
+                })
+                .GroupBy(x => x.walletId)
+                .Select(g => g.Sum(x => x.amount));
 
-            IQueryable<decimal> allAmounts = inWalletQueryAmounts.Union(otherWalletsQueryAmounts);
+            var allAmounts = categoryAmounts.Union(walletAmounts);
 
             return new ShortTransactionSummaryDomain
             {
                 Income = await allAmounts.Where(a => a > 0).SumAsync(),
                 Expense = await allAmounts.Where(a => a < 0).SumAsync()
+            };
+        }
+
+        public async Task<TransactionSummaryDomain> GetSummaryAsync(GetTransactionsDto dto)
+        {
+            var transactions = GetFilteredTransactions(dto);
+
+            var categoryInfos = transactions
+                .Where(t => t is CategoryTransaction)
+                .Select(t => t as CategoryTransaction)
+                .Select(t => new
+                {
+                    t.CategoryId,
+                    t.Category.Name,
+                    t.Amount
+                })
+                .GroupBy(x => new { x.CategoryId, x.Name })
+                .Select(g => new
+                {
+                    WalletId = null as int?,
+                    CategoryId = g.Key.CategoryId as int?,
+                    g.Key.Name,
+                    Amount = g.Sum(x => x.Amount)
+                });
+
+            var nativeWalletInfos = transactions
+                .Where(t => t is WalletTransaction && t.WalletId == dto.WalletId)
+                .Select(t => new
+                {
+                    (t as WalletTransaction).OtherWalletId,
+                    (t as WalletTransaction).OtherWallet.Name,
+                    t.Amount
+                })
+                .GroupBy(x => new { x.OtherWalletId, x.Name })
+                .Select(g => new
+                {
+                    WalletId = g.Key.OtherWalletId as int?,
+                    CategoryId = null as int?,
+                    g.Key.Name,
+                    Amount = g.Sum(x => x.Amount)
+                });
+
+            var relatedWalletInfos = transactions
+                .Where(t => t.WalletId != dto.WalletId)
+                .Select(t => new
+                {
+                    t.WalletId,
+                    t.Wallet.Name,
+                    t.Amount
+                })
+                .GroupBy(x => new { x.WalletId, x.Name })
+                .Select(g => new
+                {
+                    WalletId = g.Key.WalletId as int?,
+                    CategoryId = null as int?,
+                    g.Key.Name,
+                    Amount = g.Sum(x => x.Amount) * -1
+                })
+                .Where(i => i.Amount != 0);
+
+            var allInfos = await categoryInfos
+                .Union(nativeWalletInfos)
+                .Union(relatedWalletInfos)
+                .ToListAsync();
+
+            var categoryIncomes = allInfos
+                .Where(i => i.CategoryId != null && i.Amount > 0)
+                .Select(i => new CategoryOrWalletSummaryDomain
+                {
+                    Id = i.CategoryId.Value,
+                    Name = i.Name,
+                    Amount = i.Amount
+                });
+
+            var categoryExpenses = allInfos
+                .Where(i => i.CategoryId != null && i.Amount < 0)
+                .Select(i => new CategoryOrWalletSummaryDomain
+                {
+                    Id = i.CategoryId.Value,
+                    Name = i.Name,
+                    Amount = i.Amount
+                });
+
+            var walletIncomes = allInfos
+                .Where(i => i.WalletId != null && i.Amount > 0)
+                .Select(i => new CategoryOrWalletSummaryDomain
+                {
+                    Id = i.WalletId.Value,
+                    Name = i.Name,
+                    Amount = i.Amount
+                });
+
+            var walletExpenses = allInfos
+                .Where(i => i.WalletId != null && i.Amount < 0)
+                .Select(i => new CategoryOrWalletSummaryDomain
+                {
+                    Id = i.WalletId.Value,
+                    Name = i.Name,
+                    Amount = i.Amount
+                });
+
+            return new TransactionSummaryDomain
+            {
+                TotalIncome = allInfos
+                    .Where(i => i.Amount > 0)
+                    .Sum(i => i.Amount),
+                TotalExpense = allInfos
+                    .Where(i => i.Amount < 0)
+                    .Sum(i => i.Amount),
+                IncomeDetails = new OneWayTransactionSummaryDomain
+                {
+                    Categories = categoryIncomes,
+                    Wallets = walletIncomes
+                },
+                ExpenseDetails = new OneWayTransactionSummaryDomain
+                {
+                    Categories = categoryExpenses,
+                    Wallets = walletExpenses
+                }
             };
         }
     }

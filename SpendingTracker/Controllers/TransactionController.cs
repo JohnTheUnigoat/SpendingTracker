@@ -36,10 +36,16 @@ namespace SpendingTracker.Controllers
             return domains.AllToResponse();
         }
 
-        [HttpGet("summary")]
-        public async Task<ShortTransactionSummaryResponse> GetTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
+        [HttpGet("summary_short")]
+        public async Task<ShortTransactionSummaryResponse> GetShortTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
         {
             return (await _transactionService.GetShortSummaryAsync(request.ToDto(walletId))).ToResponse();
+        }
+
+        [HttpGet("summary")]
+        public async Task<TransactionSummaryDomain> GetTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
+        {
+            return await _transactionService.GetSummaryAsync(request.ToDto(walletId));
         }
 
         [HttpPost]
