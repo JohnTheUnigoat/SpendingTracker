@@ -16,6 +16,8 @@ namespace BL.Services
 
         Task RenameWalletAsync(int walletId, string name);
 
+        Task SetWalletReportPeriodAsync(int walletId, string reportPeriod);
+
         Task DeleteWalletAsync(int walletId);
     }
 }

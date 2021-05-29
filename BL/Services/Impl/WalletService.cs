@@ -107,5 +107,21 @@ namespace BL.Services.Impl
 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task SetWalletReportPeriodAsync(int walletId, string reportPeriod)
+        {
+            var wallet = new Wallet
+            {
+                Id = walletId
+            };
+
+            _dbContext.Attach(wallet);
+
+            wallet.DefaultReportPeriod = reportPeriod;
+
+            await _dbContext.SaveChangesAsync();
+
+            _dbContext.Entry(wallet).State = EntityState.Detached;
+        }
     }
 }

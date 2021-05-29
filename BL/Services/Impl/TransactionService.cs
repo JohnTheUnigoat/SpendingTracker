@@ -17,9 +17,12 @@ namespace BL.Services.Impl
     {
         private readonly AppDbContext _dbContext;
 
-        public TransactionService(AppDbContext dbContext)
+        private readonly IWalletService _walletService;
+
+        public TransactionService(AppDbContext dbContext, IWalletService walletService)
         {
             _dbContext = dbContext;
+            _walletService = walletService;
         }
 
         private async Task<string> GetDefaultReportPriod(int walletId)
@@ -105,6 +108,11 @@ namespace BL.Services.Impl
         public async Task<List<TransactionDomain>> GetTransactionsAsync(GetTransactionsDto dto)
         {
             var transactions = GetFilteredTransactions(dto);
+
+            if (dto.ReportPeriod != ReportPeriods.Custom)
+            {
+                await _walletService.SetWalletReportPeriodAsync(dto.WalletId, dto.ReportPeriod);
+            }
 
             IQueryable<TransactionDomain> categoryTransactions = transactions
                 .Where(t => t is CategoryTransaction)
@@ -293,6 +301,11 @@ namespace BL.Services.Impl
         {
             var transactions = GetFilteredTransactions(dto);
 
+            if (dto.ReportPeriod != ReportPeriods.Custom)
+            {
+                await _walletService.SetWalletReportPeriodAsync(dto.WalletId, dto.ReportPeriod);
+            }
+
             var categoryAmounts = transactions
                 .Where(t => t is CategoryTransaction)
                 .Select(t => t.Amount);
@@ -323,6 +336,11 @@ namespace BL.Services.Impl
         public async Task<TransactionSummaryDomain> GetSummaryAsync(GetTransactionsDto dto)
         {
             var transactions = GetFilteredTransactions(dto);
+
+            if (dto.ReportPeriod != ReportPeriods.Custom)
+            {
+                await _walletService.SetWalletReportPeriodAsync(dto.WalletId, dto.ReportPeriod);
+            }
 
             var categoryInfos = transactions
                 .Where(t => t is CategoryTransaction)
