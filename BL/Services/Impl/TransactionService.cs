@@ -391,7 +391,10 @@ namespace BL.Services.Impl
                 {
                     WalletId = (t as WalletTransaction).OtherWalletId,
                     Name = (t as WalletTransaction).OtherWallet.Name,
-                    Amount = t.Amount
+                    Amount = t.Amount,
+                    IsWalletShared = 
+                        (t as WalletTransaction).OtherWallet.UserId == dto.UserId ||
+                        (t as WalletTransaction).OtherWallet.WalletAllowedUsers.Any(wu => wu.UserId == dto.UserId)
                 });
 
             var relatedWalletInfos = transactions
@@ -400,20 +403,54 @@ namespace BL.Services.Impl
                 {
                     WalletId = t.WalletId,
                     Name = t.Wallet.Name,
-                    Amount = t.Amount * -1
+                    Amount = t.Amount * -1,
+                    IsWalletShared =
+                        t.Wallet.UserId == dto.UserId ||
+                        t.Wallet.WalletAllowedUsers.Any(wu => wu.UserId == dto.UserId)
                 });
 
-            var walletInfos = nativeWalletInfos
+            var walletInfosWithUnshared = nativeWalletInfos
                 .Union(relatedWalletInfos)
-                .GroupBy(x => new { x.WalletId, x.Name })
+                .GroupBy(x => new { x.WalletId, x.Name, x.IsWalletShared })
                 .Select(g => new
                 {
-                    WalletId = g.Key.WalletId as int?,
-                    CategoryId = null as int?,
+                    g.Key.WalletId,
                     g.Key.Name,
-                    Amount = g.Sum(x => x.Amount)
+                    Amount = g.Sum(x => x.Amount),
+                    g.Key.IsWalletShared
                 })
-                .Where(x => x.Amount != 0);
+                .Where(x => x.Amount != 0)
+                .Select(x => new
+                {
+                    x.WalletId,
+                    x.Name,
+                    x.Amount,
+                    IsIncome = x.Amount > 0,
+                    x.IsWalletShared
+                });
+
+            var walletInfosOnlyShared = walletInfosWithUnshared
+                .Where(x => x.IsWalletShared)
+                .Select(x => new
+                {
+                    WalletId = x.WalletId as int?,
+                    CategoryId = null as int?,
+                    Name = x.Name,
+                    Amount = x.Amount
+                });
+
+            var walletInfosOnlyUnshared = walletInfosWithUnshared
+                .Where(x => x.IsWalletShared == false)
+                .GroupBy(x => new { x.IsWalletShared, x.IsIncome})
+                .Select(g => new
+                {
+                    WalletId = null as int?,
+                    CategoryId = null as int?,
+                    Name = "Private wallet(s)",
+                    Amount = g.Sum(x => x.Amount)
+                });
+
+            var walletInfos = walletInfosOnlyShared.Union(walletInfosOnlyUnshared);
 
             var allInfos = await categoryInfos
                 .Union(walletInfos)
@@ -421,7 +458,7 @@ namespace BL.Services.Impl
 
             var categoryIncomes = allInfos
                 .Where(i => i.CategoryId != null && i.Amount > 0)
-                .Select(i => new CategoryOrWalletSummaryDomain
+                .Select(i => new CategorySummaryDomain
                 {
                     Id = i.CategoryId.Value,
                     Name = i.Name,
@@ -430,7 +467,7 @@ namespace BL.Services.Impl
 
             var categoryExpenses = allInfos
                 .Where(i => i.CategoryId != null && i.Amount < 0)
-                .Select(i => new CategoryOrWalletSummaryDomain
+                .Select(i => new CategorySummaryDomain
                 {
                     Id = i.CategoryId.Value,
                     Name = i.Name,
@@ -438,19 +475,19 @@ namespace BL.Services.Impl
                 });
 
             var walletIncomes = allInfos
-                .Where(i => i.WalletId != null && i.Amount > 0)
-                .Select(i => new CategoryOrWalletSummaryDomain
+                .Where(i => i.CategoryId == null && i.Amount > 0)
+                .Select(i => new WalletSummaryDomain
                 {
-                    Id = i.WalletId.Value,
+                    Id = i.WalletId,
                     Name = i.Name,
                     Amount = i.Amount
                 });
 
             var walletExpenses = allInfos
-                .Where(i => i.WalletId != null && i.Amount < 0)
-                .Select(i => new CategoryOrWalletSummaryDomain
+                .Where(i => i.CategoryId == null && i.Amount < 0)
+                .Select(i => new WalletSummaryDomain
                 {
-                    Id = i.WalletId.Value,
+                    Id = i.WalletId,
                     Name = i.Name,
                     Amount = i.Amount
                 });

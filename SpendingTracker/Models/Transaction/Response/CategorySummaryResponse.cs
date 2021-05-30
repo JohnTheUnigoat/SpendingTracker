@@ -1,6 +1,6 @@
-﻿namespace BL.Model.Transaction
+﻿namespace SpendingTracker.Models.Transaction.Response
 {
-    public class CategoryOrWalletSummaryDomain
+    public class CategorySummaryResponse
     {
         public int Id { get; set; }
 

@@ -4,8 +4,8 @@ namespace SpendingTracker.Models.Transaction.Response
 {
     public class OneWaySummaryResponse
     {
-        public IEnumerable<CategoryOrWalletSummaryResponse> Categories { get; set; }
+        public IEnumerable<CategorySummaryResponse> Categories { get; set; }
 
-        public IEnumerable<CategoryOrWalletSummaryResponse> Wallets { get; set; }
+        public IEnumerable<WalletSummaryResponse> Wallets { get; set; }
     }
 }

@@ -32,13 +32,17 @@ namespace SpendingTracker.Mappers
                 OtherWalletId = request.OtherWalletId.Value
             };
 
-        public static GetTransactionsDto ToDto(this GetTransactionRequest request, int walletId) => new GetTransactionsDto
-        {
-            WalletId = walletId,
-            ReportPeriod = request.ReportPeriod,
-            CustomFromDate = request.From,
-            CustomToDate = request.To
-        };
+        public static GetTransactionsDto ToDto(
+            this GetTransactionRequest request,
+            int walletId,
+            int userId) => new GetTransactionsDto
+            {
+                WalletId = walletId,
+                ReportPeriod = request.ReportPeriod,
+                CustomFromDate = request.From,
+                CustomToDate = request.To,
+                UserId = userId
+            };
 
         public static TransactionResponse ToResponse(this TransactionDomain domain) => new TransactionResponse
         {
@@ -61,16 +65,29 @@ namespace SpendingTracker.Mappers
                 Expense = domain.Expense
             };
 
-        public static CategoryOrWalletSummaryResponse ToResponse(
-            this CategoryOrWalletSummaryDomain domain) => new CategoryOrWalletSummaryResponse
+        public static CategorySummaryResponse ToResponse(
+            this CategorySummaryDomain domain) => new CategorySummaryResponse
             {
                 Id = domain.Id,
                 Name = domain.Name,
                 Amount = domain.Amount
             };
 
-        public static IEnumerable<CategoryOrWalletSummaryResponse> AllToResponse(
-            this IEnumerable<CategoryOrWalletSummaryDomain> domains) => domains
+        public static IEnumerable<CategorySummaryResponse> AllToResponse(
+            this IEnumerable<CategorySummaryDomain> domains) => domains
+            .Select(d => d.ToResponse())
+            .ToList();
+
+        public static WalletSummaryResponse ToResponse(
+            this WalletSummaryDomain domain) => new WalletSummaryResponse
+            {
+                Id = domain.Id,
+                Name = domain.Name,
+                Amount = domain.Amount
+            };
+
+        public static IEnumerable<WalletSummaryResponse> AllToResponse(
+            this IEnumerable<WalletSummaryDomain> domains) => domains
             .Select(d => d.ToResponse())
             .ToList();
 

@@ -30,7 +30,7 @@ namespace SpendingTracker.Controllers
         [HttpGet]
         public async Task<IEnumerable<TransactionResponse>> GetTransactions(int walletId, [FromQuery] GetTransactionRequest request)
         {
-            List<TransactionDomain> domains = await _transactionService.GetTransactionsAsync(request.ToDto(walletId));
+            List<TransactionDomain> domains = await _transactionService.GetTransactionsAsync(request.ToDto(walletId, UserId));
 
             return domains.AllToResponse();
         }
@@ -38,13 +38,13 @@ namespace SpendingTracker.Controllers
         [HttpGet("summary_short")]
         public async Task<ShortTransactionSummaryResponse> GetShortTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
         {
-            return (await _transactionService.GetShortSummaryAsync(request.ToDto(walletId))).ToResponse();
+            return (await _transactionService.GetShortSummaryAsync(request.ToDto(walletId, UserId))).ToResponse();
         }
 
         [HttpGet("summary")]
         public async Task<TransactionSummaryResponse> GetTransactionSummary(int walletId, [FromQuery] GetTransactionRequest request)
         {
-            return (await _transactionService.GetSummaryAsync(request.ToDto(walletId))).ToResponse();
+            return (await _transactionService.GetSummaryAsync(request.ToDto(walletId, UserId))).ToResponse();
         }
 
         [HttpPost]

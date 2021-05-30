@@ -11,5 +11,7 @@ namespace BL.Model.Transaction
         public DateTime? CustomFromDate { get; set; }
 
         public DateTime? CustomToDate { get; set; }
+
+        public int UserId { get; set; }
     }
 }
