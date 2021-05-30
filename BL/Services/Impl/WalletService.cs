@@ -22,20 +22,23 @@ namespace BL.Services.Impl
 
         public async Task<bool> IsUserAuthorizedForWalletAsync(int walletId, int userId)
         {
-            Wallet wallet = await _dbContext.Wallets.AsNoTracking().SingleOrDefaultAsync(w => w.Id == walletId);
+            Wallet wallet = await _dbContext.Wallets
+                .AsNoTracking()
+                .Include(w => w.WalletAllowedUsers)
+                .SingleOrDefaultAsync(w => w.Id == walletId);
 
             if (wallet == null)
             {
                 throw new HttpStatusException(404);
             }
 
-            return wallet.UserId == userId;
+            return wallet.UserId == userId || wallet.WalletAllowedUsers.Any(wu => wu.UserId == userId);
         }
 
         public async Task<IEnumerable<WalletDomain>> GetWalletsAsync(int userId)
         {
             return await _dbContext.Wallets
-                .Where(w => w.UserId == userId)
+                .Where(w => w.UserId == userId || w.WalletAllowedUsers.Any(wu => wu.UserId == userId))
                 .Select(w => new WalletDomain
                 {
                     Id = w.Id,
