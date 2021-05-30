@@ -68,9 +68,9 @@ namespace SpendingTracker.Controllers
             AddUpdateTransactionDtoBase dto;
 
             if (request.CategoryId.HasValue)
-                dto = request.ToCategoryDto(walletId);
+                dto = request.ToCategoryDto(walletId, UserId);
             else
-                dto = request.ToWalletDto(walletId);
+                dto = request.ToWalletDto(walletId, UserId);
 
             return await _transactionService.AddTransactionAsync(dto);
         }
@@ -102,9 +102,9 @@ namespace SpendingTracker.Controllers
             AddUpdateTransactionDtoBase dto;
 
             if (request.CategoryId.HasValue)
-                dto = request.ToCategoryDto(walletId);
+                dto = request.ToCategoryDto(walletId, UserId);
             else
-                dto = request.ToWalletDto(walletId);
+                dto = request.ToWalletDto(walletId, UserId);
 
             return (await _transactionService.UpdateTransactionAsync(transactionId, dto)).ToResponse();
         }

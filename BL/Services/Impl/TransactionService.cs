@@ -220,6 +220,17 @@ namespace BL.Services.Impl
                         { nameof(wDto.OtherWalletId), "Source wallet can not be the same as the wallet transaction belongs to." }
                     });
                 }
+
+                bool userAuthorizedForOtherWallet = await _dbContext.Wallets
+                    .Where(w =>
+                        w.Id == wDto.OtherWalletId &&
+                        (w.UserId == dto.UserId || w.WalletAllowedUsers.Any(wu => wu.UserId == dto.UserId)))
+                    .AnyAsync();
+
+                if (userAuthorizedForOtherWallet == false)
+                {
+                    throw new HttpStatusException(404, "other wallet not found.");
+                }
             }
         }
 

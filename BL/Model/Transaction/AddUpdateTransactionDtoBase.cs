@@ -8,6 +8,8 @@ namespace BL.Model.Transaction
 
         public decimal Amount { get; set; }
 
+        public int UserId { get; set; }
+
         public DateTime? ManualTimestamp { get; set; }
     }
 }

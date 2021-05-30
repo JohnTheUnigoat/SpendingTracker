@@ -10,21 +10,25 @@ namespace SpendingTracker.Mappers
     {
         public static AddUpdateCategoryTransactionDto ToCategoryDto(
             this AddUpdateTransactionRequest request,
-            int walletId) => new()
+            int walletId,
+            int userId) => new()
             {
                 WalletId = walletId,
                 Amount = request.Amount,
                 ManualTimestamp = request.ManualTimestamp,
+                UserId = userId,
                 CaterodyId = request.CategoryId.Value
             };
 
         public static AddUpdateWalletTransactionDto ToWalletDto(
             this AddUpdateTransactionRequest request,
-            int walletId) => new()
+            int walletId,
+            int userId) => new()
             {
                 WalletId = walletId,
                 Amount = request.Amount,
                 ManualTimestamp = request.ManualTimestamp,
+                UserId = userId,
                 OtherWalletId = request.OtherWalletId.Value
             };
 
