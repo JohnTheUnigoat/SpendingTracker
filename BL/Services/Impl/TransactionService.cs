@@ -126,34 +126,48 @@ namespace BL.Services.Impl
                     Timestamp = t.TimeStamp
                 });
 
-            IQueryable<TransactionDomain> nativeWalletTransactions = transactions
+            var nativeWalletInfos = transactions
                 .Where(t => t is WalletTransaction && t.WalletId == dto.WalletId)
-                .Select(t => new TransactionDomain
+                .Select(t => new
                 {
-                    Id = t.Id,
-                    Amount = t.Amount,
-                    CategoryId = null,
+                    t.Id,
+                    t.Amount,
                     OtherWalletId = (t as WalletTransaction).OtherWalletId,
                     TargetLabel = (t as WalletTransaction).OtherWallet.Name,
-                    Timestamp = t.TimeStamp
+                    t.TimeStamp,
+                    IsWalletShared =
+                        (t as WalletTransaction).OtherWallet.UserId == dto.UserId ||
+                        (t as WalletTransaction).OtherWallet.WalletAllowedUsers.Any(wu => wu.UserId == dto.UserId)
                 });
 
-            IQueryable<TransactionDomain> relatedWalletTransactions = transactions
+            var relatedWalletInfos = transactions
                 .Where(t => t is WalletTransaction && t.WalletId != dto.WalletId)
-                .Select(t => new TransactionDomain
+                .Select(t => new
                 {
-                    Id = t.Id,
-                    Amount = t.Amount * -1,
-                    CategoryId = null,
+                    t.Id,
+                    t.Amount,
                     OtherWalletId = t.WalletId,
                     TargetLabel = t.Wallet.Name,
-                    Timestamp = t.TimeStamp
+                    t.TimeStamp,
+                    IsWalletShared =
+                        (t as WalletTransaction).Wallet.UserId == dto.UserId ||
+                        (t as WalletTransaction).Wallet.WalletAllowedUsers.Any(wu => wu.UserId == dto.UserId)
                 });
 
-            List<TransactionDomain> res = await
-                categoryTransactions
-                    .Union(nativeWalletTransactions)
-                    .Union(relatedWalletTransactions)
+            IQueryable<TransactionDomain> walletTransactions = nativeWalletInfos
+                .Union(relatedWalletInfos)
+                .Select(x => new TransactionDomain
+                {
+                    Id = x.Id,
+                    Amount = x.Amount,
+                    CategoryId = null,
+                    OtherWalletId = x.IsWalletShared ? x.OtherWalletId : null,
+                    TargetLabel = x.IsWalletShared ? x.TargetLabel : "Private wallet",
+                    Timestamp = x.TimeStamp
+                });
+
+            List<TransactionDomain> res = await categoryTransactions
+                    .Union(walletTransactions)
                     .OrderBy(t => t.Timestamp)
                 .ToListAsync();
 
