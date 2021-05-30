@@ -174,6 +174,20 @@ namespace BL.Services.Impl
             {
                 var cDto = dto as AddUpdateCategoryTransactionDto;
 
+                var categoryBelongsToWalletOwner = await _dbContext.Categories
+                    .Where(c => c.Id == cDto.CaterodyId)
+                    .Join(
+                        _dbContext.Wallets.Where(w => w.Id == cDto.WalletId),
+                        c => c.UserId,
+                        w => w.UserId,
+                        (c, w) => 1)
+                    .AnyAsync();
+
+                if (categoryBelongsToWalletOwner == false)
+                {
+                    throw new ValidationException(new() { { nameof(cDto.CaterodyId), "Category should belong to the wallet's owner." } });
+                }
+
                 var targetCategory = await _dbContext.Categories
                     .AsNoTracking()
                     .FirstAsync(c => c.Id == cDto.CaterodyId);
