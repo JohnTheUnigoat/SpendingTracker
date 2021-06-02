@@ -1,49 +1,25 @@
 <script lang="ts">
-	import Test from "./components/Test.svelte";
-	import TodoList from "./components/TodoList.svelte";
-	import { Router, Route, Link } from "svelte-navigator";
-import GoogleLogin from "./components/GoogleLogin.svelte";
+	import GoogleLogin from "./components/GoogleLogin.svelte";
+	import Tabs from "./components/Tabs/Tabs.svelte";
+	import type { TabInfo } from "./components/Tabs/tabinfo";
+	import Page1 from "./components/Page1.svelte";
+	import Page2 from "./components/Page2.svelte";
+	import token from "./stores/tokenStore";
 
-	export let name: string;
+	const tabs: TabInfo[] = [
+		{
+			name: "Page #1",
+			component: Page1
+		},
+		{
+			name: "Page #2",
+			component: Page2
+		}
+	]
 </script>
 
-<main>
-	<Router>
-		<h1>Hello {name}!</h1>
-		<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-	
-		<GoogleLogin />
+<GoogleLogin />
 
-		<Link to="test">Test</Link> | <Link to="todo">Todo</Link>
-
-		<Route path="test">
-			<Test />
-		</Route>
-	
-		<Route path="todo">
-			<TodoList />
-		</Route>
-	</Router>
-</main>
-
-<style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
-</style>
+{#if $token}
+<Tabs tabs={tabs}></Tabs>
+{/if}
