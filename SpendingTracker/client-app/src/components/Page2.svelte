@@ -1,8 +1,11 @@
 <script lang="ts">
-    import type { Wallet } from '../models/Wallet';
+    import type { ReportPeriodString } from '../models/wallet/ReportPeriodString';
+    import type { Wallet } from '../models/wallet/Wallet';
     import { walletStore } from '../stores/walletStore';
 
     let wallet: Wallet;
+
+    let reportPeriodString: ReportPeriodString;
 
     $: console.log(wallet);
 </script>
@@ -15,6 +18,4 @@
     {/each}
 </select>
 
-{#each $walletStore as wallet}
-<div>{ wallet.name }</div>
-{/each}
+// TODO: report period select

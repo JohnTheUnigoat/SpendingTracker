@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import type { AuthResponse } from "./models/auth/AuthResponse";
+import type { User } from "./models/auth/User";
 import type { Wallet } from "./models/Wallet";
 import token from "./stores/tokenStore";
 
@@ -35,6 +36,10 @@ class Api {
                 "Content-Type": "application/json"
             }
         });
+    }
+
+    getUser() {
+        return this.http.get<User>('/auth/user');
     }
 
     getWallets() {

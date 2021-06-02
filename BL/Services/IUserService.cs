@@ -8,8 +8,10 @@ namespace BL.Services
         /// <summary>
         /// Gets user id but google id. Return 0 if no such user exists
         /// </summary>
-        public Task<int> GetUserIdByGoogleId(string googleId);
+        Task<int> GetUserIdByGoogleId(string googleId);
 
-        public Task<UserDomain> UpsertUser(UserDomain model);
+        Task<UserDomain> GetUser(int userId);
+
+        Task<UserDomain> UpsertUser(UserDomain model);
     }
 }

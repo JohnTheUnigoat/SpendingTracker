@@ -5,6 +5,9 @@
 	import Page1 from "./components/Page1.svelte";
 	import Page2 from "./components/Page2.svelte";
 	import token from "./stores/tokenStore";
+	import LoggedIn from "./components/LoggedIn.svelte";
+	import user from "./stores/userStore";
+import api from "./api";
 
 	const tabs: TabInfo[] = [
 		{
@@ -16,10 +19,18 @@
 			component: Page2
 		}
 	]
+
+	if($token) {
+		api.getUser().then(res => {
+			user.set(res.data);
+		});
+	}
 </script>
 
-<GoogleLogin />
-
 {#if $token}
+<LoggedIn />
 <Tabs tabs={tabs}></Tabs>
+{:else}
+<GoogleLogin />
 {/if}
+

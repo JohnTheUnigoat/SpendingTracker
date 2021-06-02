@@ -19,7 +19,7 @@ namespace BL.Services.Impl
         }
         
         /// <summary>
-        /// Gets user id but google id. Return 0 if no such user exists
+        /// Gets user id by google id. Return 0 if no such user exists
         /// </summary>
         public async Task<int> GetUserIdByGoogleId(string googleId)
         {
@@ -29,6 +29,22 @@ namespace BL.Services.Impl
                 .FirstOrDefaultAsync();
 
             return userId;
+        }
+
+        public async Task<UserDomain> GetUser(int userId)
+        {
+            return await _dbContext.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new UserDomain
+                {
+                    Id = u.Id,
+                    GoogleId = u.GoogleId,
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    PictureUrl = u.PictureUrl
+                })
+                .FirstAsync();
         }
 
         public async Task<UserDomain> UpsertUser(UserDomain model)

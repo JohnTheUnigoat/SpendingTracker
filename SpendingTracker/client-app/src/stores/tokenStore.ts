@@ -1,4 +1,6 @@
 import { writable } from "svelte/store";
+import api from "../api";
+import user from "./userStore";
 
 // const token = writable<string | null>(null);
 
