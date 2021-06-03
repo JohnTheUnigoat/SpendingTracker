@@ -1,36 +1,45 @@
 <script lang="ts">
-	import GoogleLogin from "./components/GoogleLogin.svelte";
-	import Tabs from "./components/Tabs/Tabs.svelte";
-	import type { TabInfo } from "./components/Tabs/tabinfo";
-	import Page1 from "./components/Page1.svelte";
-	import Page2 from "./components/Page2.svelte";
 	import token from "./stores/tokenStore";
-	import LoggedIn from "./components/LoggedIn.svelte";
 	import user from "./stores/userStore";
-import api from "./api";
+	import api from "./api";
+	import { Header } from "./components/Header";
+	import { MainPage } from "./components/MainPage";
+	import { onMount } from "svelte";
+	import GoogleLogin from "./components/GoogleLogin.svelte";
 
-	const tabs: TabInfo[] = [
-		{
-			name: "Page #1",
-			component: Page1
-		},
-		{
-			name: "Page #2",
-			component: Page2
-		}
-	]
-
-	if($token) {
-		api.getUser().then(res => {
+	onMount(async () => {
+		if($token) {
+			let res = await api.getUser();
 			user.set(res.data);
-		});
-	}
+		}
+	});
 </script>
 
-{#if $token}
-<LoggedIn />
-<Tabs tabs={tabs}></Tabs>
-{:else}
-<GoogleLogin />
-{/if}
+<div class="vertical-container">
+	<Header />
 
+	<div class="main">
+		{#if $token}
+		<MainPage />
+		{:else}
+		<GoogleLogin />
+		{/if}
+	</div>
+</div>
+
+<style>
+	.vertical-container {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
+	.main {
+		flex: 1 1 auto;
+		width: 80%;
+		margin: auto;
+		padding: 0.7em;
+		display: flex;
+		justify-content: center;
+	}
+</style>

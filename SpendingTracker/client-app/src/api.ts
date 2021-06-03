@@ -1,7 +1,8 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosTransformer } from "axios";
 import type { AuthResponse } from "./models/auth/AuthResponse";
 import type { User } from "./models/auth/User";
-import type { Wallet } from "./models/Wallet";
+import type { Transaction } from "./models/transaction/Transaction";
+import type { Wallet } from "./models/wallet/Wallet";
 import token from "./stores/tokenStore";
 
 class Api {
@@ -44,6 +45,22 @@ class Api {
 
     getWallets() {
         return this.http.get<Wallet[]>('/wallets');
+    }
+
+    getTransactions(walletId: number, reportPeriod: string, from?: Date, to?: Date) {
+        return this.http.get<Transaction[]>(`/wallets/${walletId}/transactions`, {
+            params: {
+                reportPeriod,
+                from,
+                to
+            },
+            transformResponse: [
+                ...this.http.defaults.transformResponse as AxiosTransformer[],
+                (transactions: {timestamp: string}[]) => {
+                    return transactions.map(t => ({...t, timestamp: new Date(t.timestamp)}));
+                },
+            ]
+        });
     }
 }
 

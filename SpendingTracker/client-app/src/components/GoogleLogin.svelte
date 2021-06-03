@@ -3,10 +3,10 @@
 </svelte:head>
 
 <script lang="ts">
-    import api from "../api";
-    import type { GoogleResponse } from "../models/auth/GoogleResponse";
-    import token from "../stores/tokenStore";
-    import user from "../stores/userStore";
+    import api from '../api';
+    import type { GoogleResponse } from '../models/auth/GoogleResponse';
+    import token from '../stores/tokenStore';
+    import user from '../stores/userStore';
 
     (window as any).onSignIn = async (response: GoogleResponse) => {
         var res = await api.signIn(response.credential);
