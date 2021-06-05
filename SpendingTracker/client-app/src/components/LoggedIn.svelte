@@ -1,6 +1,6 @@
 <script lang="ts">
-    import token from '../../stores/tokenStore';
-    import user from '../../stores/userStore';
+    import token from "../stores/tokenStore";
+    import user from "../stores/userStore";
 
     let logOut = () => {
         token.set(null);

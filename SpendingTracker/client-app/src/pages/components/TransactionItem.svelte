@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { Transaction } from '../../../../models/transaction/Transaction';
-    import { getAmPmTime } from '../../../../helpers/dateHelpers';
+    import { getAmPmTime } from "../../helpers/dateHelpers";
+    import type { Transaction } from "../../models/transaction/Transaction";
 
     export let transaction: Transaction;
 </script>

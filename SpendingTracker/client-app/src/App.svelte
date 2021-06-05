@@ -1,11 +1,11 @@
 <script lang="ts">
-    import token from "./stores/tokenStore";
-    import user from "./stores/userStore";
-    import api from "./api";
-    import { Header } from "./components/Header";
-    import { MainPage } from "./components/MainPage";
-    import { onMount } from "svelte";
-    import GoogleLogin from "./components/GoogleLogin.svelte";
+    import { onMount } from 'svelte';
+    import api from './api';
+    import token from './stores/tokenStore';
+    import user from './stores/userStore';
+    import MainPage from './pages/MainPage.svelte';
+    import Header from './components/Header.svelte';
+    import GoogleLogin from './components/GoogleLogin.svelte';
 
     onMount(async () => {
         if($token) {

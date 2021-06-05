@@ -1,7 +1,6 @@
 <script lang="ts">
-    import token from '../../stores/tokenStore';
+    import token from '../stores/tokenStore';
     import LoggedIn from './LoggedIn.svelte';
-
 </script>
 
 <div class="container">

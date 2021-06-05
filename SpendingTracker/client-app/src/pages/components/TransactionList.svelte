@@ -1,8 +1,8 @@
 <script lang="ts">
-    import api from "../../../api";
-    import { getDatePart } from "../../../helpers/dateHelpers";
-    import type { Transaction } from "../../../models/transaction/Transaction";
-    import { TransactionItem } from './TransactionItem';
+    import api from '../../api';
+    import { getDatePart } from '../../helpers/dateHelpers';
+    import type { Transaction } from '../../models/transaction/Transaction';
+    import TransactionItem from './TransactionItem.svelte';
 
     export let walletId: number;
     export let reportPeriod: string;

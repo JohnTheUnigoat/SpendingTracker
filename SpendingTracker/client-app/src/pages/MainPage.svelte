@@ -1,14 +1,12 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import api from '../../api';
-    import type { Transaction } from '../../models/transaction/Transaction';
-    import type { ReportPeriod } from '../../models/wallet/ReportPeriod';
-    import { reportPeriods } from '../../models/wallet/ReportPeriod';
-    import { getReportPeriod } from '../../models/wallet/ReportPeriod';
-    import type { Wallet } from '../../models/wallet/Wallet';
-    import TwoStateSelector from '../TwoStateSelector.svelte';
-    import { TransactionList } from './TransactionList';
-    import ShortSummary from './TransactionList/ShortSummary.svelte';
+    import api from '../api';
+    import { getReportPeriod, reportPeriods } from '../models/wallet/ReportPeriod';
+    import type { ReportPeriod } from '../models/wallet/ReportPeriod';
+    import type { Wallet } from '../models/wallet/Wallet';
+    import ShortSummary from './components/ShortSummary.svelte';
+    import TwoStateSelector from '../components/TwoStateSelector.svelte';
+    import TransactionList from './components/TransactionList.svelte';
 
     let wallets: Wallet[] = [];
 
