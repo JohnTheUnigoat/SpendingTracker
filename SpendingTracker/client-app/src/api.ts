@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosTransformer } from "axios";
 import type { AuthResponse } from "./models/auth/AuthResponse";
 import type { User } from "./models/auth/User";
-import { ShortSummary } from "./models/transaction/ShortSummary";
+import type { ShortSummary } from "./models/transaction/ShortSummary";
 import type { Transaction } from "./models/transaction/Transaction";
 import type { Wallet } from "./models/wallet/Wallet";
 import token from "./stores/tokenStore";

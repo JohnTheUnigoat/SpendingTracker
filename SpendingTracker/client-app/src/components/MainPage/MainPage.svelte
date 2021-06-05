@@ -16,7 +16,6 @@
 
     let currentWallet: Wallet;
     let currentReportPeriod: ReportPeriod;
-    let transactions: Transaction[] = [];
 
     let walletChange = () => {
         currentReportPeriod = getReportPeriod(currentWallet.defaultReportPeriod);
