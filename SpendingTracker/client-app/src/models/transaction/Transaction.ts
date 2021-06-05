@@ -1,6 +1,6 @@
 export interface Transaction {
     id: number;
-    amount: string;
+    amount: number;
     targetLabel: string;
     categoryId: number | null;
     otherWalletId: number | null;

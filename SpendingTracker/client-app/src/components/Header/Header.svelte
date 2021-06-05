@@ -6,7 +6,7 @@
 
 <div class="container">
     <div class="logo">
-        SpendingTracker
+        Spending Tracker
     </div>
     {#if $token}
     <LoggedIn />
@@ -15,16 +15,17 @@
 
 <style>
     .container {
-        background: #333;
+        background: var(--bg-light);
         padding: 1em;
         display: flex;
         justify-content: space-between;
-        height: 2.5em;
+        height: 4.6em;
     }
 
     .logo {
-        color: #eee;
+        color: var(--highlight);
         font-family: Verdana;
-        font-size: 2em;
+        font-size: 1.1em;
+        max-width: 5em;
     }
 </style>

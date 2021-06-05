@@ -24,7 +24,7 @@
     .container {
         display:  flex;
         height: 100%;
-        color: #eee;
+        color: var(--white);
         align-items: center;
     }
 
@@ -33,7 +33,7 @@
     }
 
     img {
-        border: 1px solid #222;
+        border: 1px solid var(--bg-dark);
         border-radius: 1000em;
         height: 100%;
         margin-right: 0.3em;
@@ -44,13 +44,13 @@
     }
 
     button {
-        color: rgb(202, 151, 10);
+        color: var(--highlight);
         background: none;
         border: none;
         text-decoration: underline;
     }
 
     button:hover {
-        color:rgb(252, 185, 41);
+        color: var(--highlight-hover);
     }
 </style>

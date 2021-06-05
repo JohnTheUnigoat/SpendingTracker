@@ -168,7 +168,7 @@ namespace BL.Services.Impl
 
             List<TransactionDomain> res = await categoryTransactions
                     .Union(walletTransactions)
-                    .OrderBy(t => t.Timestamp)
+                    .OrderByDescending(t => t.Timestamp)
                 .ToListAsync();
 
             return res;

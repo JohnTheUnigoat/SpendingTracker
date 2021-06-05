@@ -31,7 +31,7 @@ namespace SpendingTracker.Controllers
         }
 
         [Authorize]
-        [HttpGet("user")]
+        [HttpGet("user")]   
         public async Task<UserResponse> GetUser()
         {
             return (await _userService.GetUser(UserId)).ToResponse();

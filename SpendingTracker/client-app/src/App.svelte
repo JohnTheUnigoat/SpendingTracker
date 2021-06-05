@@ -37,9 +37,17 @@
 	.main {
 		flex: 1 1 auto;
 		width: 80%;
+		max-width: 800px;
 		margin: auto;
 		padding: 0.7em;
 		display: flex;
 		justify-content: center;
 	}
+
+	@media screen and (max-width: 500px) {
+        .main {
+            width: 100%;
+			font-size: 90%;
+        }
+    }
 </style>
