@@ -1,8 +1,22 @@
 <script lang="ts">
+    import api from "../../../api";
     import { getDatePart } from "../../../helpers/dateHelpers";
     import type { Transaction } from "../../../models/transaction/Transaction";
     import { TransactionItem } from './TransactionItem';
-    export let transactions: Transaction[];
+
+    export let walletId: number;
+    export let reportPeriod: string;
+
+    let transactions: Transaction[] = [];
+
+    const fetchTransactions = async () => {
+        let res = await api.getTransactions(walletId, reportPeriod);
+        transactions = res.data;
+    };
+
+    $: if (walletId && reportPeriod) {
+        fetchTransactions();
+    }
 
     $: groupedTransactions = (() => {
         let dates = [...new Set(transactions.map(t => t.timestamp.toLocaleDateString()))].map(ds => new Date(ds));
@@ -29,25 +43,18 @@
         <TransactionItem {transaction}/>
         {/each}
     </div>
-
-    <br>
     {/each}
 </div>
 
 <style>
-    .container {
-        padding: 0 2em;
-    }
-
-    @media screen and (max-width: 500px) {
-        .container {
-            padding: 0 0.2em;
-        }
-    }
-
     .date {
         text-align: center;
-        color: var(--white);
-        margin-bottom: 0.7em;
+        color: var(--gray);
+        margin: 0.7em 0;
+    }
+
+    .transactions {
+        background: var(--bg-medium);
+        border-radius: 0.5em;
     }
 </style>

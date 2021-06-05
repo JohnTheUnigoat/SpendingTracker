@@ -9,7 +9,9 @@
         Spending Tracker
     </div>
     {#if $token}
-    <LoggedIn />
+    <div class="logged-in">
+        <LoggedIn />
+    </div>
     {/if}
 </div>
 
@@ -19,7 +21,11 @@
         padding: 1em;
         display: flex;
         justify-content: space-between;
-        height: 4.6em;
+        align-items: center;
+    }
+
+    .container > * {
+        height: 3em;
     }
 
     .logo {
@@ -27,5 +33,13 @@
         font-family: Verdana;
         font-size: 1.1em;
         max-width: 5em;
+        display: flex;
+        align-items: center;
+    }
+
+    @media screen and (max-width: 400px) {
+        .container {
+            padding: 0.5em;
+        }
     }
 </style>

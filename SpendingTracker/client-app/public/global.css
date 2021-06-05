@@ -9,6 +9,14 @@
 	--highlight: #ecae28;
 	--highlight-hover: #eeba2c;
 
+	--red: #ff4242;
+	--red-bg: #613d3d;
+	--red-border: #923939;
+
+	--green: #5abd5f;
+	--green-bg: #384639;
+	--green-border: #2e5f31;
+
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 

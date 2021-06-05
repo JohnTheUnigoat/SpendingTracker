@@ -25,27 +25,31 @@
 <style>
     .container {
         display: flex;
+        align-items: center;
         width: 100%;
         padding: 1em;
-
-        border-radius: 0.5em;
-        margin: 0.4em 0;
-        background: var(--bg-medium);
         color: var(--gray);
     }
-/* 
+
     .container:not(:last-child) {
-        border-bottom: 1px solid var(--bg-dark);
-    } */
+        border-bottom: 3px solid var(--bg-light);
+    }
 
     .amount {
-        width: 3.5em;
+        width: 4.8em;
         text-align: start;
-        color: #d33737;
+        color: var(--red);
+        padding: 0.2em;
+        background: var(--red-bg);
+        border: 2px solid var(--red-border);
+        border-radius: 0.3em;
+        text-align: center;
     }
 
     .amount.positive {
-        color: #5abd5f;
+        color: var(--green);
+        background: var(--green-bg);
+        border-color: var(--green-border);
     }
 
     .amount.positive::before {
@@ -55,5 +59,6 @@
     .label {
         flex: 1 0 auto;
         margin: 0 1em;
+        color: var(--white);
     }
 </style>

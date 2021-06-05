@@ -6,28 +6,24 @@
     import { reportPeriods } from '../../models/wallet/ReportPeriod';
     import { getReportPeriod } from '../../models/wallet/ReportPeriod';
     import type { Wallet } from '../../models/wallet/Wallet';
+    import TwoStateSelector from '../TwoStateSelector.svelte';
     import { TransactionList } from './TransactionList';
+    import ShortSummary from './TransactionList/ShortSummary.svelte';
 
     let wallets: Wallet[] = [];
+
+    let isSummarySelected = false;
+
     let currentWallet: Wallet;
     let currentReportPeriod: ReportPeriod;
     let transactions: Transaction[] = [];
 
-    let fetchTransactions = async () => {
-        let res = await api.getTransactions(currentWallet.id, currentReportPeriod.code);
-        currentWallet.defaultReportPeriod = currentReportPeriod.code;
-        transactions = res.data;
-    };
-
     let walletChange = () => {
         currentReportPeriod = getReportPeriod(currentWallet.defaultReportPeriod);
-        fetchTransactions();
     };
 
     let reportPeriodChange = () => {
         currentWallet.defaultReportPeriod = currentReportPeriod.code;
-        fetchTransactions();
-        console.log(wallets);
     };
 
     onMount(async () => {
@@ -36,14 +32,12 @@
 
         currentWallet = wallets[0];
         currentReportPeriod = getReportPeriod(wallets[0].defaultReportPeriod) ?? currentReportPeriod;
-
-        fetchTransactions();
     });
 </script>
 
 <div class="container">
     <div class="select-container">
-        <div class="select">
+        <div class="select wallet">
             <i class="fas fa-wallet"></i>
             <!-- svelte-ignore a11y-no-onchange -->
             <select bind:value={currentWallet} on:change={walletChange}>
@@ -53,7 +47,7 @@
             </select>
         </div>
         
-        <div class="select">
+        <div class="select period">
             <i class="fas fa-calendar-alt"></i>
             <!-- svelte-ignore a11y-no-onchange -->
             <select bind:value={currentReportPeriod} on:change={reportPeriodChange}>
@@ -64,15 +58,21 @@
                 {/each}
             </select>
         </div>
+
+        <div class="summary-toggle">
+            <TwoStateSelector labels={["History", "Summary"]} bind:value={isSummarySelected}/>
+        </div>
     </div>
-    
-    <TransactionList {transactions} />
+
+    <ShortSummary walletId={currentWallet?.id} reportPeriod={currentReportPeriod?.code} />
+
+    <TransactionList walletId={currentWallet?.id} reportPeriod={currentReportPeriod?.code} />
 </div>
 
 <style>
     .container {
         width: 100%;
-        padding: 0.5em;
+        padding: 1em 2em;
         background: var(--bg-light);
         border-radius: 0.5em;
         color: var(--white);
@@ -80,24 +80,38 @@
 
     .select-container {
         display: flex;
-        margin-bottom: 1.5em;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.7em;
+    }
+
+    .select-container > * {
+        margin-bottom: 0.4em;
     }
 
     .select {
         display: flex;
         align-items: center;
-        width: 50%;
-        max-width: 17em;
+        width: 100%;
     }
 
-    .select:not(:last-child) {
-        margin-right: 0.4em;
+    .select.wallet {
+        padding-right: 0.2em;
+    }
+
+    .select.period {
+        padding-left: 0.2em;
+    }
+
+    .summary-toggle {
+        margin-left: 0.4em;
+        width: 50%;
     }
 
     .select .fas {
         font-size: 150%;
         width: 1.2em;
-        margin-right: 0.15em;
+        margin-right: 0.2em;
         text-align: center;
         color: var(--highlight);
     }
@@ -106,8 +120,38 @@
         padding: 0.5em;
         color: var(--white);
         background: var(--bg-medium);
+        width: 100%;
         border: none;
-        flex: 1 0 auto;
+        border-radius: 0.5em;
         outline: none;
+    }
+
+    @media screen and (max-width: 600px) {
+        .container {
+            padding: 0.5em;
+        }
+        
+        .select-container {
+            flex-wrap: wrap;
+        }
+
+        .select {
+            width: 50%;
+        }
+
+        .summary-toggle {
+            width: 100%;
+            margin: 0;
+        }
+    }
+
+    @media screen and (max-width: 400px) {
+        .select .fas {
+            font-size: 120%;
+        }
+
+        .select select {
+            padding: 0.2em;
+        }
     }
 </style>
