@@ -30,6 +30,11 @@
         currentWallet = wallets[0];
         currentReportPeriod = getReportPeriod(wallets[0].defaultReportPeriod) ?? currentReportPeriod;
     });
+
+    $: getTransactionsProps = {
+        walletId: currentWallet?.id,
+        reportPeriod: currentReportPeriod?.code
+    };
 </script>
 
 <div class="container">
@@ -61,9 +66,9 @@
         </div>
     </div>
 
-    <ShortSummary walletId={currentWallet?.id} reportPeriod={currentReportPeriod?.code} />
+    <ShortSummary {...getTransactionsProps} />
 
-    <TransactionList walletId={currentWallet?.id} reportPeriod={currentReportPeriod?.code} />
+    <TransactionList {...getTransactionsProps} />
 </div>
 
 <style>
