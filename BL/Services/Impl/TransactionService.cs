@@ -145,7 +145,7 @@ namespace BL.Services.Impl
                 .Select(t => new
                 {
                     t.Id,
-                    t.Amount,
+                    Amount = t.Amount * -1,
                     OtherWalletId = t.WalletId,
                     TargetLabel = t.Wallet.Name,
                     t.TimeStamp,

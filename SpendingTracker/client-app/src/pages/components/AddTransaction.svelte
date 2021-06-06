@@ -1,9 +1,11 @@
 <script lang="ts">
-    import api from "../../api";
+    import { bind } from "svelte/internal";
+import api from "../../api";
     import Buttons from "../../components/Buttons.svelte";
     import TwoStateSelector from "../../components/TwoStateSelector.svelte";
     import type { AddTransactionRequest } from "../../models/api/AddTransaction";
-    import AddCategoryTransaction from "./AddCategoryTransaction.svelte";
+    import CategoryTransactionForm from "./CategoryTransactionForm.svelte";
+import WalletTransactionForm from "./WalletTransactionForm.svelte";
 
     let readyToSave: boolean;
     let payload: AddTransactionRequest;
@@ -31,16 +33,16 @@
     <hr>
 
     {#if isWallet}
-    <div>here will be wallet thing</div>
+    <WalletTransactionForm bind:readyToSave={readyToSave} bind:payload={payload} />
     {:else}
-    <AddCategoryTransaction bind:readyToSave={readyToSave} bind:payload={payload} />
+    <CategoryTransactionForm bind:readyToSave={readyToSave} bind:payload={payload} />
     {/if}
 
     <div class="form"></div>
 
     <div class="buttons">
         <Buttons
-            primary={{text: 'Add', action: addTransaction}}
+            primary={{text: 'Add', action: addTransaction, disabled: readyToSave === false}}
             secondary={{text: 'Cancel', action: () => onComplete(false)}}
         />
     </div>

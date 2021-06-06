@@ -1,7 +1,7 @@
 <script lang="ts">
     import api from "../../api";
     import TwoStateSelector from "../../components/TwoStateSelector.svelte";
-import type { AddTransactionRequest } from "../../models/api/AddTransaction";
+    import type { AddTransactionRequest } from "../../models/api/AddTransaction";
     import type { Categories } from "../../models/category/Categories";
     import type { Category } from "../../models/category/Category";
     import type { Wallet } from "../../models/wallet/Wallet";
@@ -12,7 +12,7 @@ import type { AddTransactionRequest } from "../../models/api/AddTransaction";
     let selectedWallet: Wallet | null = null;
 
     let isExpense = false;
-    let amount = 0;
+    let amount: number | null = null;
 
     let categoriesOptions: Category[] = [];
     let selectedCategory: Category | null = null;
@@ -38,11 +38,11 @@ import type { AddTransactionRequest } from "../../models/api/AddTransaction";
         updateCategoriesOptions();
     }
 
-    $: if (amount < 0) amount = -amount;
+    $: if (amount !== null && amount < 0) amount = -amount;
 
     $: walletId = selectedWallet?.id ?? null;
     $: categoryId = selectedCategory?.id ?? null;
-    $: finalAmount = isExpense ? -amount : amount;
+    $: finalAmount = isExpense ? (amount as number) * -1 : amount as number;
 
     export let readyToSave = false;
     export let payload: AddTransactionRequest;
