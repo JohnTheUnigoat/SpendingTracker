@@ -1,8 +1,16 @@
 <script lang="ts">
+import { createEventDispatcher } from "svelte";
+
     import { getAmPmTime } from "../../helpers/dateHelpers";
     import type { Transaction } from "../../models/transaction/Transaction";
 
     export let transaction: Transaction;
+
+    const dispatchDelete = createEventDispatcher<{delete: null}>();
+
+    const onDeleteClick = () => {
+        dispatchDelete('delete');
+    };
 </script>
 
 <div class="container">
@@ -19,6 +27,10 @@
 
     <div class="time">
         {getAmPmTime(transaction.timestamp)}
+    </div>
+
+    <div class="delete" on:click={onDeleteClick}>
+        <i class="fas fa-trash-alt"></i>
     </div>
 </div>
 
@@ -60,5 +72,18 @@
         flex: 1 0 auto;
         margin: 0 1em;
         color: var(--white);
+    }
+
+    .delete {
+        padding: 0.5em;
+        color: var(--highlight);
+    }
+
+    .delete:hover {
+        color: var(--highlight-hover);
+    }
+
+    .delete:active {
+        color: var(--highlight-active);
     }
 </style>

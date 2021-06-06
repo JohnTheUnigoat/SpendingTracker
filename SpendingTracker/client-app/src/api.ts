@@ -74,6 +74,10 @@ class Api {
         });
     }
 
+    deleteTransaction(walletId: number, transactionId: number) {
+        return this.http.delete(`/wallets/${walletId}/transactions/${transactionId}`);
+    }
+
     getShortSummary(walletId: number, reportPeriod: string, from?: Date, to?: Date) {
         return this.http.get<ShortSummary>(`/wallets/${walletId}/transactions/summary_short`, {
             params: {

@@ -16,6 +16,14 @@
         }
     };
 
+    const deleteTransaction = (id: number) => {
+        if (walletId) {
+            api.deleteTransaction(walletId, id).then(() => {
+                fetchTransactions();
+            });
+        }
+    };
+
     export let needUpdate = false;
 
     $: if (needUpdate) {
@@ -44,7 +52,7 @@
 
     <div class="transactions">
         {#each group.transactions as transaction}
-        <TransactionItem {transaction}/>
+        <TransactionItem {transaction} on:delete={() => deleteTransaction(transaction.id)}/>
         {/each}
     </div>
     {/each}
