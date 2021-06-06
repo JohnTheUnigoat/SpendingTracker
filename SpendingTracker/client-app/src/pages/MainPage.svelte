@@ -13,22 +13,26 @@
 
     let isSummarySelected = false;
 
-    let currentWallet: Wallet;
-    let currentReportPeriod: ReportPeriod;
+    let currentWallet: Wallet | null = null;
+    let currentReportPeriod: ReportPeriod | null = null;
 
     let isTransactionModalOpen = false;
 
     const walletChange = () => {
-        currentReportPeriod = getReportPeriod(currentWallet.defaultReportPeriod);
+        if (currentWallet) {
+            currentReportPeriod = getReportPeriod(currentWallet.defaultReportPeriod);
+        }
     };
 
     const reportPeriodChange = () => {
-        currentWallet.defaultReportPeriod = currentReportPeriod.code;
+        if (currentWallet && currentReportPeriod) {
+            currentWallet.defaultReportPeriod = currentReportPeriod.code;
+        }
     };
 
     // props for fetching transaction
-    $: walletId = currentWallet?.id;
-    $: reportPeriod = currentReportPeriod?.code;
+    $: walletId = currentWallet?.id ?? null;
+    $: reportPeriod = currentReportPeriod?.code ?? null;
 
     let summaryNeedsUpdate = false;
     let transactionsNeedUpdate = false;
@@ -50,7 +54,7 @@
         update();
     }
 
-    const onTransactionModalDone = (success: boolean) => {
+    const onTransactionModalDone = () => {
         isTransactionModalOpen = false;
         update();
     }

@@ -2,14 +2,16 @@
     import api from '../../api';
     import type { ShortSummary } from '../../models/transaction/ShortSummary';
 
-    export let walletId: number;
-    export let reportPeriod: string;
+    export let walletId: number | null;
+    export let reportPeriod: string | null;
 
     let summary: ShortSummary;
 
     const fetchSummary = async () => {
-        let res = await api.getShortSummary(walletId, reportPeriod);
-        summary = res.data;
+        if (walletId && reportPeriod) {
+            let res = await api.getShortSummary(walletId, reportPeriod);
+            summary = res.data;
+        }
     };
 
     export let needUpdate = false;

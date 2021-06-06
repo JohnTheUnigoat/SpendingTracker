@@ -4,14 +4,16 @@
     import type { Transaction } from '../../models/transaction/Transaction';
     import TransactionItem from './TransactionItem.svelte';
 
-    export let walletId: number;
-    export let reportPeriod: string;
+    export let walletId: number | null;
+    export let reportPeriod: string | null;
 
     let transactions: Transaction[] = [];
 
     const fetchTransactions = async () => {
-        let res = await api.getTransactions(walletId, reportPeriod);
-        transactions = res.data;
+        if (walletId && reportPeriod) {
+            let res = await api.getTransactions(walletId, reportPeriod);
+            transactions = res.data;
+        }
     };
 
     export let needUpdate = false;
