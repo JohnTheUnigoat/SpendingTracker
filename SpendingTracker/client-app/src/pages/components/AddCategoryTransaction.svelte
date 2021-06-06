@@ -1,14 +1,12 @@
 <script lang="ts">
-import api from "../../api";
-import Buttons from "../../components/Buttons.svelte";
-import TwoStateSelector from "../../components/TwoStateSelector.svelte";
-import type { Categories } from "../../models/category/Categories";
-
-import type { Category } from "../../models/category/Category";
-
+    import api from "../../api";
+    import Buttons from "../../components/Buttons.svelte";
+    import TwoStateSelector from "../../components/TwoStateSelector.svelte";
+    import type { Categories } from "../../models/category/Categories";
+    import type { Category } from "../../models/category/Category";
     import type { Wallet } from "../../models/wallet/Wallet";
-import categories from "../../stores/categoryStore";
-import user from "../../stores/userStore";
+    import categories from "../../stores/categoryStore";
+    import user from "../../stores/userStore";
     import wallets from "../../stores/walletStore";
 
     export let onComplete: (success: boolean) => any;
