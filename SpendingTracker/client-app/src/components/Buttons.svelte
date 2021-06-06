@@ -27,6 +27,7 @@ import { text } from "svelte/internal";
 <style>
     .container {
         display: flex;
+        height: 100%;
     }
 
     .container button {

@@ -177,6 +177,7 @@
         margin-left: auto;
         background: var(--highlight);
         color: var(--bg-medium);
+        box-shadow: var(--bg-dark) 0 0.1em 0.3em 0.1em;
     }
 
     .add-transaction .circle:hover {
@@ -204,6 +205,11 @@
         .summary-toggle {
             width: 100%;
             margin: 0;
+        }
+
+        .add-transaction .circle {
+            width: 1.5em;
+            height: 1.5em;
         }
     }
 

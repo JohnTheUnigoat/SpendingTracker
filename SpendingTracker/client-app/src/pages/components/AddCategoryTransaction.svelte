@@ -104,10 +104,7 @@
 
 <style>
     .container {
-        background: var(--bg-light);
-        padding: 1em;
-        border-radius: 0.5em;
-        border: 0.2em solid var(--bg-dark);
+        font-size: 1rem;
     }
 
     .input {
@@ -119,22 +116,27 @@
 
     .income-expense-select {
         margin-bottom: 0.5em;
-        
+        font-size: 1.2rem;
     }
 
     .fas {
-        width: 2em;
-        font-size: 120%;
+        font-size: 1.8rem;
+        width: 1.5em;
         color: var(--highlight);
         text-align: center;
     }
 
     input, select {
+        font-size: inherit;
         flex: 1 0 auto;
-        padding: 0.5em;
+        padding: 0.8em;
         background: var(--bg-medium);
         color: var(--white);
         border: none;
         border-radius: 0.5em;
+    }
+
+    .buttons {
+        height: 3em;
     }
 </style>
