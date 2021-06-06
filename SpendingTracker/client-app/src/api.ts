@@ -4,6 +4,7 @@ import type { AuthResponse } from "./models/auth/AuthResponse";
 import type { User } from "./models/auth/User";
 import type { Categories } from "./models/category/Categories";
 import type { ShortSummary } from "./models/transaction/ShortSummary";
+import type { SummaryResponse } from "./models/transaction/SummaryReponse";
 import type { Transaction } from "./models/transaction/Transaction";
 import type { Wallet } from "./models/wallet/Wallet";
 import token from "./stores/tokenStore";
@@ -80,6 +81,16 @@ class Api {
 
     getShortSummary(walletId: number, reportPeriod: string, from?: Date, to?: Date) {
         return this.http.get<ShortSummary>(`/wallets/${walletId}/transactions/summary_short`, {
+            params: {
+                reportPeriod,
+                from,
+                to
+            }
+        });
+    }
+
+    getSummary(walletId: number, reportPeriod: string, from?: Date, to?: Date) {
+        return this.http.get<SummaryResponse>(`/wallets/${walletId}/transactions/summary`, {
             params: {
                 reportPeriod,
                 from,

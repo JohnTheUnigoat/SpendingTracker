@@ -10,6 +10,7 @@
     import Modal from '../components/Modal.svelte';
     import wallets from '../stores/walletStore';
     import AddTransaction from './components/AddTransaction.svelte';
+import Summary from './components/Summary.svelte';
 
     let isSummarySelected = false;
 
@@ -51,6 +52,7 @@
     }
 
     $: if (walletId && reportPeriod) {
+        isSummarySelected;
         update();
     }
 
@@ -89,9 +91,12 @@
         </div>
     </div>
 
+    {#if isSummarySelected}
+    <Summary {walletId} {reportPeriod} bind:needUpdate={summaryNeedsUpdate} />
+    {:else}
     <ShortSummary {walletId} {reportPeriod} bind:needUpdate={summaryNeedsUpdate} />
-
     <TransactionList {walletId} {reportPeriod} bind:needUpdate={transactionsNeedUpdate} />
+    {/if}
 
     <div class="add-transaction" on:click={() => isTransactionModalOpen = true}>
         <div class="circle">
