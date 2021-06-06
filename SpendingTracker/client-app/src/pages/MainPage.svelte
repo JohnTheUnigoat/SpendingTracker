@@ -89,7 +89,11 @@
 
     <TransactionList {walletId} {reportPeriod} bind:needUpdate={transactionsNeedUpdate} />
 
-    <button on:click={() => isTransactionModalOpen = true}>Add</button>
+    <div class="add-transaction" on:click={() => isTransactionModalOpen = true}>
+        <div class="circle">
+            <i class="fas fa-plus"></i>
+        </div>
+    </div>
 
     {#if isTransactionModalOpen}
     <Modal>
@@ -153,6 +157,35 @@
         border: none;
         border-radius: 0.5em;
         outline: none;
+    }
+
+    .add-transaction {
+        font-size: 250%;
+        position: sticky;
+        text-align: end;
+        bottom: 0.5em;
+        padding: 0.3em 0.15em 0 0;
+    }
+
+    .add-transaction .circle {
+        width: 1.2em;
+        height: 1.2em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        margin-left: auto;
+        background: var(--highlight);
+        color: var(--bg-medium);
+    }
+
+    .add-transaction .circle:hover {
+        background: var(--highlight-hover);
+        color: var(--bg-dark);
+    }
+
+    .add-transaction .circle:active {
+        background: var(--highlight-active);
     }
 
     @media screen and (max-width: 600px) {
