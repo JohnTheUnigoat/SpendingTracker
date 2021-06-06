@@ -12,6 +12,8 @@ namespace BL.Services
 
         Task<CategoriesDomain> GetCategoriesAsync(int userId);
 
+        Task<CategoriesDomain> GetCategoriesForWalletAsync(int walletId);
+
         Task UpdateCategory(int categoryId, AddUpdateCategoryDto dto);
 
         Task DeleteCategory(int categoryId);

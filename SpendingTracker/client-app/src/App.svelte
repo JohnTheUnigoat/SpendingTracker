@@ -6,11 +6,14 @@
     import MainPage from './pages/MainPage.svelte';
     import Header from './components/Header.svelte';
     import GoogleLogin from './components/GoogleLogin.svelte';
+    import categories from './stores/categoryStore';
 
     onMount(async () => {
         if($token) {
-            let res = await api.getUser();
-            user.set(res.data);
+            const [userRes, categoriesRes] = await Promise.all([api.getUser(), api.getCategories()]);
+
+            user.set(userRes.data);
+            categories.set(categoriesRes.data);
         }
     });
 </script>

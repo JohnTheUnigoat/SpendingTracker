@@ -7,34 +7,53 @@
     import ShortSummary from './components/ShortSummary.svelte';
     import TwoStateSelector from '../components/TwoStateSelector.svelte';
     import TransactionList from './components/TransactionList.svelte';
-
-    let wallets: Wallet[] = [];
+    import AddCategoryTransaction from './components/AddCategoryTransaction.svelte';
+    import Modal from '../components/Modal.svelte';
+    import wallets from '../stores/walletStore';
 
     let isSummarySelected = false;
 
     let currentWallet: Wallet;
     let currentReportPeriod: ReportPeriod;
 
-    let walletChange = () => {
+    let isTransactionModalOpen = false;
+
+    const walletChange = () => {
         currentReportPeriod = getReportPeriod(currentWallet.defaultReportPeriod);
     };
 
-    let reportPeriodChange = () => {
+    const reportPeriodChange = () => {
         currentWallet.defaultReportPeriod = currentReportPeriod.code;
     };
 
+    // props for fetching transaction
+    $: walletId = currentWallet?.id;
+    $: reportPeriod = currentReportPeriod?.code;
+
+    let summaryNeedsUpdate = false;
+    let transactionsNeedUpdate = false;
+
     onMount(async () => {
         let res = await api.getWallets();
-        wallets = res.data;
+        $wallets = res.data;
 
-        currentWallet = wallets[0];
-        currentReportPeriod = getReportPeriod(wallets[0].defaultReportPeriod) ?? currentReportPeriod;
+        currentWallet = $wallets[0];
+        currentReportPeriod = getReportPeriod($wallets[0].defaultReportPeriod) ?? currentReportPeriod;
     });
 
-    $: getTransactionsProps = {
-        walletId: currentWallet?.id,
-        reportPeriod: currentReportPeriod?.code
-    };
+    const update = () => {
+        summaryNeedsUpdate = true;
+        transactionsNeedUpdate = true;
+    }
+
+    $: if (walletId && reportPeriod) {
+        update();
+    }
+
+    const onTransactionModalDone = (success: boolean) => {
+        isTransactionModalOpen = false;
+        update();
+    }
 </script>
 
 <div class="container">
@@ -43,7 +62,7 @@
             <i class="fas fa-wallet"></i>
             <!-- svelte-ignore a11y-no-onchange -->
             <select bind:value={currentWallet} on:change={walletChange}>
-                {#each wallets as wallet}
+                {#each $wallets as wallet}
                 <option value={wallet}>{wallet.name}</option>
                 {/each}
             </select>
@@ -66,9 +85,17 @@
         </div>
     </div>
 
-    <ShortSummary {...getTransactionsProps} />
+    <ShortSummary {walletId} {reportPeriod} bind:needUpdate={summaryNeedsUpdate} />
 
-    <TransactionList {...getTransactionsProps} />
+    <TransactionList {walletId} {reportPeriod} bind:needUpdate={transactionsNeedUpdate} />
+
+    <button on:click={() => isTransactionModalOpen = true}>Add</button>
+
+    {#if isTransactionModalOpen}
+    <Modal>
+        <AddCategoryTransaction onComplete={onTransactionModalDone}/>
+    </Modal>
+    {/if}
 </div>
 
 <style>
@@ -132,7 +159,7 @@
         .container {
             padding: 0.5em;
         }
-        
+
         .select-container {
             flex-wrap: wrap;
         }

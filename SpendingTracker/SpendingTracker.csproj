@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>32ab2879-d832-4d5c-a879-20f13d75e39a</UserSecretsId>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
 
   <ItemGroup>

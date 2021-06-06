@@ -12,10 +12,11 @@
         summary = res.data;
     };
 
-    $: if (walletId && reportPeriod) {
-        fetchSummary();
-    }
+    export let needUpdate = false;
 
+    $: if (needUpdate) {
+        fetchSummary().then(() => needUpdate = false);
+    }
 </script>
 
 {#if summary}

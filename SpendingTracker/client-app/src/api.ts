@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosTransformer } from "axios";
 import type { AuthResponse } from "./models/auth/AuthResponse";
 import type { User } from "./models/auth/User";
+import type { Categories } from "./models/category/Categories";
 import type { ShortSummary } from "./models/transaction/ShortSummary";
 import type { Transaction } from "./models/transaction/Transaction";
 import type { Wallet } from "./models/wallet/Wallet";
@@ -64,7 +65,15 @@ class Api {
         });
     }
 
-    getShortSummary(walletId: number, reportPeriod: string, from?: Date, to?: Date){
+    addTransaction(walletId: number, amount: number, categoryId?: number, otherWalletId?: number) {
+        return this.http.post(`/wallets/${walletId}/transactions`, {
+            amount,
+            categoryId,
+            otherWalletId
+        });
+    }
+
+    getShortSummary(walletId: number, reportPeriod: string, from?: Date, to?: Date) {
         return this.http.get<ShortSummary>(`/wallets/${walletId}/transactions/summary_short`, {
             params: {
                 reportPeriod,
@@ -72,6 +81,14 @@ class Api {
                 to
             }
         });
+    }
+
+    getCategories() {
+        return this.http.get<Categories>('/categories');
+    }
+
+    getWalletCategories(walletId: number) {
+        return this.http.get<Categories>(`/wallets/${walletId}/categories`);
     }
 }
 

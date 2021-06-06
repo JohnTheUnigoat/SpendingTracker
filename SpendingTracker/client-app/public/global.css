@@ -1,13 +1,16 @@
 :root {
 	--bg-dark: #232527;
+	--bg-dark-transparent: #1e2730b9;
 	--bg-medium: #313335;
+	--bg-medium-hover: #373b3f;
 	--bg-light: #3d4047;
 
 	--white: #eee;
 	--gray: #aaa;
 
 	--highlight: #ecae28;
-	--highlight-hover: #eeba2c;
+	--highlight-hover: #eec12c;
+	--highlight-active: #eee12c;
 
 	--red: #ff4242;
 	--red-bg: #613d3d;
@@ -29,6 +32,11 @@ body {
 	padding: 0;
 	height: 100%;
 	background: var(--bg-dark);
+}
+
+body.modal-open {
+	height: 100vh;
+	overflow-y: hidden;
 }
 
 * {

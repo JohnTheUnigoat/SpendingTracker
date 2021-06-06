@@ -42,6 +42,7 @@ namespace BL.Services.Impl
                 .Select(w => new WalletDomain
                 {
                     Id = w.Id,
+                    OwnerEmail = w.User.Email,
                     Name = w.Name,
                     DefaultReportPeriod = w.DefaultReportPeriod
                 })

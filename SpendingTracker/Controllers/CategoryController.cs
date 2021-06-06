@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Mappers;
 using SpendingTracker.Models.Category.Request;
 using SpendingTracker.Models.Category.Response;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SpendingTracker.Controllers
@@ -28,6 +27,17 @@ namespace SpendingTracker.Controllers
         public async Task<CategoriesResponse> GetCategories()
         {
             return (await _categoryService.GetCategoriesAsync(UserId)).ToResponse();
+        }
+
+        [HttpGet("/api/wallets/{walletId:int}/categories")]
+        public async Task<CategoriesResponse> GetWalletCategories(int walletId)
+        {
+            if (await _walletService.IsUserAuthorizedForWalletAsync(walletId, UserId) == false)
+            {
+                throw new HttpStatusException(401);
+            }
+
+            return (await _categoryService.GetCategoriesForWalletAsync(walletId)).ToResponse();
         }
 
         [HttpPost]

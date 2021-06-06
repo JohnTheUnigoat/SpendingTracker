@@ -14,8 +14,10 @@
         transactions = res.data;
     };
 
-    $: if (walletId && reportPeriod) {
-        fetchTransactions();
+    export let needUpdate = false;
+
+    $: if (needUpdate) {
+        fetchTransactions().then(() => needUpdate = false);
     }
 
     $: groupedTransactions = (() => {

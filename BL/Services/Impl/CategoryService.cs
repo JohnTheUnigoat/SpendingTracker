@@ -30,10 +30,9 @@ namespace BL.Services.Impl
             return newCategory.Id;
         }
 
-        public async Task<CategoriesDomain> GetCategoriesAsync(int userId)
+        private async Task<CategoriesDomain> GetCategoriesDomain(IQueryable<Category> categories)
         {
-            List<CategoryDomain> categories = await _dbContext.Categories
-                .Where(c => c.UserId == userId)
+            List<CategoryDomain> categoryDomains = await categories
                 .Select(c => new CategoryDomain
                 {
                     Id = c.Id,
@@ -44,9 +43,33 @@ namespace BL.Services.Impl
 
             return new CategoriesDomain
             {
-                Income = categories.Where(c => c.IsIncome).ToList(),
-                Expense = categories.Where(c => c.IsIncome == false).ToList()
+                Income = categoryDomains.Where(c => c.IsIncome).ToList(),
+                Expense = categoryDomains.Where(c => c.IsIncome == false).ToList()
             };
+        }
+
+        public async Task<CategoriesDomain> GetCategoriesAsync(int userId)
+        {
+            IQueryable<Category> categories = _dbContext.Categories
+                .Where(c => c.UserId == userId);
+
+            return await GetCategoriesDomain(categories);
+        }
+
+        public async Task<CategoriesDomain> GetCategoriesForWalletAsync(int walletId)
+        {
+            IQueryable<int> userIdQueriable = _dbContext.Wallets
+                .Where(w => w.Id == walletId)
+                .Select(w => w.UserId);
+
+            IQueryable<Category> categories = _dbContext.Categories
+                .Join(
+                    userIdQueriable,
+                    c => c.UserId,
+                    uId => uId,
+                    (c, uId) => c);
+
+            return await GetCategoriesDomain(categories);
         }
 
         public async Task DeleteCategory(int categoryId)

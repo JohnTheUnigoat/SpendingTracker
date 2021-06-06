@@ -33,7 +33,7 @@ namespace DAL_EF
 
             modelBuilder.Entity<User>()
                 .HasMany(us => us.Wallets)
-                .WithOne()
+                .WithOne(w => w.User)
                 .HasForeignKey(w => w.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
