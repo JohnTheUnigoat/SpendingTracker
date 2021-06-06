@@ -11,7 +11,7 @@
 
     $: otherWalletOptions = $wallets.filter(w => w !== fromWallet);
 
-    $: if (amount < 0) amount = -amount;
+    $: if (amount && amount < 0) amount = -amount;
 
     $: walletId = toWallet?.id ?? null;
     $: otherWalletId = fromWallet?.id ?? null;
