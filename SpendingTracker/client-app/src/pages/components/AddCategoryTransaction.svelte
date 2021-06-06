@@ -1,15 +1,13 @@
 <script lang="ts">
     import api from "../../api";
-    import Buttons from "../../components/Buttons.svelte";
     import TwoStateSelector from "../../components/TwoStateSelector.svelte";
+import type { AddTransactionRequest } from "../../models/api/AddTransaction";
     import type { Categories } from "../../models/category/Categories";
     import type { Category } from "../../models/category/Category";
     import type { Wallet } from "../../models/wallet/Wallet";
     import categories from "../../stores/categoryStore";
     import user from "../../stores/userStore";
     import wallets from "../../stores/walletStore";
-
-    export let onComplete: (success: boolean) => any;
 
     let selectedWallet: Wallet | null = null;
 
@@ -46,67 +44,55 @@
     $: categoryId = selectedCategory?.id ?? null;
     $: finalAmount = isExpense ? -amount : amount;
 
+    export let readyToSave = false;
+    export let payload: AddTransactionRequest;
+
     $: readyToSave = walletId !== null && categoryId !== null && finalAmount != 0;
 
-    const addTransaction = async () => {
-        if(readyToSave) {
-            try {
-                await api.addTransaction(<number>walletId, finalAmount, <number>categoryId);
-                onComplete(true);
-            } catch {
-                console.log('Something went wrong when trying to save transaction');
-            }
-        }
+    $: if (readyToSave) {
+        payload = {
+            walletId: walletId as number,
+            amount: finalAmount,
+            categoryId: categoryId as number
+        };
     }
+    
 </script>
 
-<div class="container">
-    <div class="input">
-        <select bind:value={selectedWallet}>
-            {#if selectedWallet === null}
-            <option value={null}> Choose a wallet </option>
-            {/if}
-    
-            {#each $wallets as wallet}
-            <option value={wallet}>{wallet.name}</option>
-            {/each}
-        </select>
-    </div>
+<div class="input">
+    <select bind:value={selectedWallet}>
+        {#if selectedWallet === null}
+        <option value={null}> Choose a wallet </option>
+        {/if}
 
-    <div class="income-expense-select">
-        <TwoStateSelector labels={['Income', 'Expense']} bind:value={isExpense} />
-    </div>
+        {#each $wallets as wallet}
+        <option value={wallet}>{wallet.name}</option>
+        {/each}
+    </select>
+</div>
 
-    <div class="input">
-        <i class={isExpense ? 'fas fa-minus' :'fas fa-plus'}></i>
-        <input type="number" min="0" bind:value={amount} placeholder="Amount">
-    </div>
+<div class="income-expense-select">
+    <TwoStateSelector labels={['Income', 'Expense']} bind:value={isExpense} />
+</div>
 
-    <div class="input">
-        <select bind:value={selectedCategory} disabled={selectedWallet === null}>
-            {#if selectedCategory === null}
-            <option value={null}> Choose a category </option>
-            {/if}
+<div class="input">
+    <i class={isExpense ? 'fas fa-minus' :'fas fa-plus'}></i>
+    <input type="number" min="0" bind:value={amount} placeholder="Amount">
+</div>
 
-            {#each categoriesOptions as category}
-            <option value={category}>{category.name}</option>
-            {/each}
-        </select>
-    </div>
+<div class="input">
+    <select bind:value={selectedCategory} disabled={selectedWallet === null}>
+        {#if selectedCategory === null}
+        <option value={null}> Choose a category </option>
+        {/if}
 
-    <div class="buttons">
-        <Buttons
-            primary={{text: 'Add', action: addTransaction, disabled: readyToSave === false}}
-            secondary={{text: 'Cancel', action: () => onComplete(false)}}
-        />
-    </div>
+        {#each categoriesOptions as category}
+        <option value={category}>{category.name}</option>
+        {/each}
+    </select>
 </div>
 
 <style>
-    .container {
-        font-size: 1rem;
-    }
-
     .input {
         width: 100%;
         display: flex;
@@ -134,9 +120,5 @@
         color: var(--white);
         border: none;
         border-radius: 0.5em;
-    }
-
-    .buttons {
-        height: 3em;
     }
 </style>

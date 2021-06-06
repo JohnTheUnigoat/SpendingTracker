@@ -32,6 +32,5 @@
         border-radius: 0.5em;
         background: var(--bg-light);
         padding: 1em;
-        /* border: 0.15em solid var(--bg-medium); */
     }
 </style>

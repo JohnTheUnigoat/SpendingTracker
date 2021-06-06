@@ -7,9 +7,9 @@
     import ShortSummary from './components/ShortSummary.svelte';
     import TwoStateSelector from '../components/TwoStateSelector.svelte';
     import TransactionList from './components/TransactionList.svelte';
-    import AddCategoryTransaction from './components/AddCategoryTransaction.svelte';
     import Modal from '../components/Modal.svelte';
     import wallets from '../stores/walletStore';
+    import AddTransaction from './components/AddTransaction.svelte';
 
     let isSummarySelected = false;
 
@@ -97,7 +97,7 @@
 
     {#if isTransactionModalOpen}
     <Modal>
-        <AddCategoryTransaction onComplete={onTransactionModalDone}/>
+        <AddTransaction onComplete={onTransactionModalDone} />
     </Modal>
     {/if}
 </div>

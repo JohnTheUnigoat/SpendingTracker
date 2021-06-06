@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosTransformer } from "axios";
+import type { AddTransactionRequest } from "./models/api/AddTransaction";
 import type { AuthResponse } from "./models/auth/AuthResponse";
 import type { User } from "./models/auth/User";
 import type { Categories } from "./models/category/Categories";
@@ -65,11 +66,11 @@ class Api {
         });
     }
 
-    addTransaction(walletId: number, amount: number, categoryId?: number, otherWalletId?: number) {
-        return this.http.post(`/wallets/${walletId}/transactions`, {
-            amount,
-            categoryId,
-            otherWalletId
+    addTransaction(payload: AddTransactionRequest) {
+        return this.http.post(`/wallets/${payload.walletId}/transactions`, {
+            amount: payload.amount,
+            categoryId: payload.categoryId,
+            otherWalletId: payload.otherWalletId
         });
     }
 

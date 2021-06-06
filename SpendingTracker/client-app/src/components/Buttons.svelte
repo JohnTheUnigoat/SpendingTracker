@@ -1,6 +1,4 @@
 <script lang="ts">
-import { text } from "svelte/internal";
-
     interface ButtonConfig {
         text: string;
         action: () => any;
@@ -9,9 +7,6 @@ import { text } from "svelte/internal";
 
     export let primary: ButtonConfig; 
     export let secondary: ButtonConfig;
-
-    $: console.log(primary.disabled);
-    $: console.log(secondary.disabled);
 </script>
 
 <div class="container">

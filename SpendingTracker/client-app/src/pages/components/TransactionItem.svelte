@@ -36,7 +36,7 @@
     }
 
     .amount {
-        width: 4.8em;
+        width: 6em;
         text-align: start;
         color: var(--red);
         padding: 0.2em;
