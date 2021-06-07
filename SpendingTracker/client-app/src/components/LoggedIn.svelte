@@ -44,7 +44,7 @@
         <LoggedInMenu buttons={[
             { text: 'User Settings', action: () => dispatchUserSettings('settings-click') },
             { text: 'Sign Out', action: logOut }
-        ]}/>
+        ]} on:click={() => menuOpen = false}/>
     </div>
     {/if}
 </div>

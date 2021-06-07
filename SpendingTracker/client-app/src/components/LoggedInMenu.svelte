@@ -7,7 +7,7 @@
 
 <div class="container">
     {#each buttons as button}
-    <button on:click={button.action}>{button.text}</button>
+    <button on:click={button.action} on:click>{button.text}</button>
     {/each}
 </div>
 
