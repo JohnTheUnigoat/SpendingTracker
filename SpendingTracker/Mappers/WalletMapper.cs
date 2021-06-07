@@ -12,6 +12,7 @@ namespace SpendingTracker.Mappers
         {
             Id = domain.Id,
             OwnerEmail = domain.OwnerEmail,
+            SharedEmails = domain.SharedEmails?.ToList(),
             Name = domain.Name,
             DefaultReportPeriod = domain.DefaultReportPeriod
         };

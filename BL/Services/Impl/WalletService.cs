@@ -43,6 +43,7 @@ namespace BL.Services.Impl
                 {
                     Id = w.Id,
                     OwnerEmail = w.User.Email,
+                    SharedEmails = w.UserId == userId ? w.WalletAllowedUsers.Select(wu => wu.User.Email).ToList() : null,
                     Name = w.Name,
                     DefaultReportPeriod = w.DefaultReportPeriod
                 })
