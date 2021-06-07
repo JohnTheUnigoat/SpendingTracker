@@ -8,7 +8,7 @@
         Spending Tracker
     </div>
     {#if $token}
-    <div class="logged-in">
+    <div>
         <LoggedIn />
     </div>
     {/if}

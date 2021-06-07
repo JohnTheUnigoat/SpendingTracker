@@ -1,12 +1,30 @@
 <script lang="ts">
     import token from "../stores/tokenStore";
     import user from "../stores/userStore";
+    import LoggedInMenu from "./LoggedInMenu.svelte";
 
     let logOut = () => {
         token.set(null);
         user.set(null);
     }
+
+    let menuOpen = false;
+
+    let menuButton: HTMLElement;
+    let menuDiv: HTMLElement;
+
+    const handleClickOutsideMenu: svelte.JSX.MouseEventHandler<HTMLElement> = (e) => {
+        let target = e.target as Node;
+
+        if (menuButton && menuButton.contains(target)) return;
+
+        if (menuDiv && menuDiv.contains(target) == false) {
+            menuOpen = false;
+        }
+    }
 </script>
+
+<svelte:body on:click={handleClickOutsideMenu} />
 
 {#if $user}
 <div class="container">
@@ -14,9 +32,18 @@
     
     <p>{$user.firstName} {$user.lastName}</p>
     
-    <button on:click={logOut}>
-        Sign Out
-    </button>
+    <div class="menu-button" bind:this={menuButton} on:click={() => menuOpen = !menuOpen}>
+        <i class="fas fa-bars"></i>
+    </div>
+
+    {#if menuOpen}
+    <div class="menu" bind:this={menuDiv}>
+        <LoggedInMenu buttons={[
+            { text: 'User Settings', action: () => {} },
+            { text: 'Sign Out', action: logOut }
+        ]}/>
+    </div>
+    {/if}
 </div>
 {/if}
 
@@ -26,6 +53,7 @@
         height: 100%;
         color: var(--white);
         align-items: center;
+        position: relative;
     }
 
     .container > * {
@@ -43,14 +71,23 @@
         margin-right: 0.4em;
     }
 
-    button {
+    .menu-button {
+        font-size: 170%;
         color: var(--highlight);
-        background: none;
-        border: none;
-        text-decoration: underline;
     }
 
-    button:hover {
+    .menu-button:hover {
         color: var(--highlight-hover);
+    }
+
+    .menu-button:active {
+        color: var(--highlight-active);
+    }
+
+    .menu {
+        /* width: 100%; */
+        position: absolute;
+        top: 120%;
+        right: 0;
     }
 </style>

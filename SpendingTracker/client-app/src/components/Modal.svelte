@@ -28,7 +28,7 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        box-shadow: #131313 0 0.3em 0.9em;
+        box-shadow: var(--shadow) 0 0.3em 0.9em;
         border-radius: 0.5em;
         background: var(--bg-light);
         padding: 1em;
