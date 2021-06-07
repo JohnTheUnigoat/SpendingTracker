@@ -61,7 +61,12 @@
 
         {#each incomes as incomeSummary}
         <div class="row">
-            <div>{incomeSummary.isWallet ? '(w)' : ''}{incomeSummary.name}</div>
+            <div>
+                {#if incomeSummary.isWallet}
+                <i class="fas fa-wallet"></i>
+                {/if}
+                {incomeSummary.name}
+            </div>
             <div class="positive">{incomeSummary.amount.toFixed(2)}</div>
         </div>
         {/each}
@@ -75,7 +80,12 @@
 
         {#each expenses as expenseSummary}
         <div class="row">
-            <div>{expenseSummary.isWallet ? '(w)' : ''}{expenseSummary.name}</div>
+            <div>
+                {#if expenseSummary.isWallet}
+                <i class="fas fa-wallet"></i>
+                {/if}
+                {expenseSummary.name}
+            </div>
             <div class="negative">{expenseSummary.amount.toFixed(2)}</div>
         </div>
         {/each}
