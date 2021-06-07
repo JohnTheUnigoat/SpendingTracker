@@ -1,11 +1,10 @@
 <script lang="ts">
-    import { bind } from "svelte/internal";
-import api from "../../api";
+    import api from "../../../api";
     import Buttons from "../../components/Buttons.svelte";
     import TwoStateSelector from "../../components/TwoStateSelector.svelte";
-    import type { AddTransactionRequest } from "../../models/api/AddTransaction";
+    import type { AddTransactionRequest } from "../../../models/api/AddTransaction";
     import CategoryTransactionForm from "./CategoryTransactionForm.svelte";
-import WalletTransactionForm from "./WalletTransactionForm.svelte";
+    import WalletTransactionForm from "./WalletTransactionForm.svelte";
 
     let readyToSave: boolean;
     let payload: AddTransactionRequest;

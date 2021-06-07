@@ -14,7 +14,7 @@ namespace BL.Services
 
         Task<int> AddWalletAsync(AddWalletDto dto);
 
-        Task RenameWalletAsync(int walletId, string name);
+        Task UpdateWalletAsync(UpdateWalletDto dto);
 
         Task SetWalletReportPeriodAsync(int walletId, string reportPeriod);
 

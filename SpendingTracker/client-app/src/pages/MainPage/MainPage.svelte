@@ -1,16 +1,16 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import api from '../api';
-    import { getReportPeriod, reportPeriods } from '../models/wallet/ReportPeriod';
-    import type { ReportPeriod } from '../models/wallet/ReportPeriod';
-    import type { Wallet } from '../models/wallet/Wallet';
+    import api from '../../api';
+    import { getReportPeriod, reportPeriods } from '../../models/wallet/ReportPeriod';
+    import type { ReportPeriod } from '../../models/wallet/ReportPeriod';
+    import type { Wallet } from '../../models/wallet/Wallet';
     import ShortSummary from './components/ShortSummary.svelte';
     import TwoStateSelector from '../components/TwoStateSelector.svelte';
     import TransactionList from './components/TransactionList.svelte';
     import Modal from '../components/Modal.svelte';
-    import wallets from '../stores/walletStore';
+    import wallets from '../../stores/walletStore';
     import AddTransaction from './components/AddTransaction.svelte';
-import Summary from './components/Summary.svelte';
+    import Summary from './components/Summary.svelte';
 
     let isSummarySelected = false;
 

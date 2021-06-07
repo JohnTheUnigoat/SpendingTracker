@@ -1,8 +1,7 @@
 <script lang="ts">
-    import TwoStateSelector from "../../components/TwoStateSelector.svelte";
-    import type { AddTransactionRequest } from "../../models/api/AddTransaction";
-    import type { Wallet } from "../../models/wallet/Wallet";
-    import wallets from "../../stores/walletStore";
+    import type { AddTransactionRequest } from "../../../models/api/AddTransaction";
+    import type { Wallet } from "../../../models/wallet/Wallet";
+    import wallets from "../../../stores/walletStore";
 
     let fromWallet: Wallet | null = null;
     let toWallet: Wallet | null = null;

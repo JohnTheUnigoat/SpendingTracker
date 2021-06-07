@@ -1,13 +1,13 @@
 <script lang="ts">
-    import api from "../../api";
+    import api from "../../../api";
     import TwoStateSelector from "../../components/TwoStateSelector.svelte";
-    import type { AddTransactionRequest } from "../../models/api/AddTransaction";
-    import type { Categories } from "../../models/category/Categories";
-    import type { Category } from "../../models/category/Category";
-    import type { Wallet } from "../../models/wallet/Wallet";
-    import categories from "../../stores/categoryStore";
-    import user from "../../stores/userStore";
-    import wallets from "../../stores/walletStore";
+    import type { AddTransactionRequest } from "../../../models/api/AddTransaction";
+    import type { Categories } from "../../../models/category/Categories";
+    import type { Category } from "../../../models/category/Category";
+    import type { Wallet } from "../../../models/wallet/Wallet";
+    import categories from "../../../stores/categoryStore";
+    import user from "../../../stores/userStore";
+    import wallets from "../../../stores/walletStore";
 
     let selectedWallet: Wallet | null = null;
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-    import api from "../../api";
-    import type { SummaryResponse } from "../../models/transaction/SummaryReponse";
+    import api from "../../../api";
+    import type { SummaryResponse } from "../../../models/transaction/SummaryReponse";
 
     export let walletId: number | null;
     export let reportPeriod: string | null;

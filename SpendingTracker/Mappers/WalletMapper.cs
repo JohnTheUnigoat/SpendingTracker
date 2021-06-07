@@ -27,5 +27,14 @@ namespace SpendingTracker.Mappers
             Name = request.Name,
             UserId = userId
         };
+
+        public static UpdateWalletDto ToDto(
+            this UpdateWalletRequest request,
+            int walletId) => new UpdateWalletDto
+            {
+                WalletId = walletId,
+                Name = request.Name,
+                SharedEmails = request.SharedEmails.ToList()
+            };
     }
 }

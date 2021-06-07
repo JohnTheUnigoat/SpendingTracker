@@ -61,16 +61,60 @@ namespace BL.Services.Impl
             return newWallet.Id;
         }
 
-        public async Task RenameWalletAsync(int walletId, string name)
+        public async Task UpdateWalletAsync(UpdateWalletDto dto)
         {
-            var wallet = _dbContext.Wallets.Find(walletId);
-
-            if (wallet == null)
+            if (_dbContext.Wallets.Any(w => w.Id == dto.WalletId) == false)
             {
                 throw new HttpStatusException(404);
             }
 
-            wallet.Name = name;
+            if (dto.Name == "")
+            {
+                throw new ValidationException(new() { { nameof(dto.Name), "Name can't be empty." } });
+            }
+
+            List<int> userIds = await _dbContext.Users
+                .Where(u => dto.SharedEmails.Contains(u.Email))
+                .Select(u => u.Id)
+                .ToListAsync();
+
+            if (userIds.Count() < dto.SharedEmails.Count())
+            {
+                throw new ValidationException(new() { { nameof(dto.SharedEmails), "Some/all emails are not associated with a user." } });
+            }
+
+            List<int> currentUserIds = await _dbContext.Set<WalletAllowedUser>()
+                .Where(wu => wu.WalletId == dto.WalletId)
+                .Select(wu => wu.UserId)
+                .ToListAsync();
+
+            var newUserAssociations = userIds
+                .Where(uid => currentUserIds.Contains(uid) == false)
+                .Select(uid => new WalletAllowedUser
+                {
+                    WalletId = dto.WalletId,
+                    UserId = uid
+                });
+
+            var deletedUserAssociations = currentUserIds
+                .Where(uid => userIds.Contains(uid) == false)
+                .Select(uid => new WalletAllowedUser
+                {
+                    WalletId = dto.WalletId,
+                    UserId = uid
+                });
+
+            _dbContext.Set<WalletAllowedUser>().RemoveRange(deletedUserAssociations);
+            _dbContext.Set<WalletAllowedUser>().AddRange(newUserAssociations);
+
+            var wallet = new Wallet
+            {
+                Id = dto.WalletId
+            };
+
+            _dbContext.Attach(wallet);
+
+            wallet.Name = dto.Name;
 
             await _dbContext.SaveChangesAsync();
         }

@@ -34,9 +34,9 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpPut("{walletId:int}")]
-        public async Task RenameWallet(int walletId, [FromBody] RenameWalletRequest request)
+        public async Task UpdateWallet(int walletId, [FromBody] UpdateWalletRequest request)
         {
-            await _walletService.RenameWalletAsync(walletId, request.Name);
+            await _walletService.UpdateWalletAsync(request.ToDto(walletId));
         }
 
         [HttpDelete("{walletId:int}")]
