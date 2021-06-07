@@ -23,8 +23,8 @@
 
 {#if summary}
 <div class="container">
-    <div class="income">{summary.income}</div>
-    <div class="expense">{summary.expense}</div>
+    <div class="income">{summary.income.toFixed(2)}</div>
+    <div class="expense">{summary.expense.toFixed(2)}</div>
 </div>
 {/if}
 

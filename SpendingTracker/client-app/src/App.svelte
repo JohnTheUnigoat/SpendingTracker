@@ -47,7 +47,7 @@
         justify-content: center;
     }
 
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 700px) {
         .vertical-container {
             font-size: 90%;
         }

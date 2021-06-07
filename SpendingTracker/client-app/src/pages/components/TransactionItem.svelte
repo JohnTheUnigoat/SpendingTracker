@@ -15,7 +15,7 @@ import { createEventDispatcher } from "svelte";
 
 <div class="container">
     <div class="amount" class:positive={transaction.amount > 0}>
-        {transaction.amount}
+        {transaction.amount.toFixed(2)}
     </div>
 
     <div class="label">

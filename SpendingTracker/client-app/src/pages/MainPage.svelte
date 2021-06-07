@@ -198,7 +198,7 @@ import Summary from './components/Summary.svelte';
         background: var(--highlight-active);
     }
 
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 700px) {
         .container {
             padding: 0.5em;
         }
