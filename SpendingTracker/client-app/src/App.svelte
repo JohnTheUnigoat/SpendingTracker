@@ -3,7 +3,7 @@
     import api from './api';
     import token from './stores/tokenStore';
     import user from './stores/userStore';
-    import MainPage from './pages/MainPage.svelte';
+    import MainPage from './pages/MainPage/MainPage.svelte';
     import Header from './components/Header.svelte';
     import GoogleLogin from './components/GoogleLogin.svelte';
     import categories from './stores/categoryStore';

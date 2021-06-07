@@ -126,6 +126,10 @@
         color: var(--green);
     }
 
+    .positive::before {
+        content: '+';
+    }
+
     .negative {
         color: var(--red);
     }

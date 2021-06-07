@@ -1,7 +1,7 @@
 <script lang="ts">
     import api from "../../../api";
-    import Buttons from "../../components/Buttons.svelte";
-    import TwoStateSelector from "../../components/TwoStateSelector.svelte";
+    import Buttons from "../../../components/Buttons.svelte";
+    import TwoStateSelector from "../../../components/TwoStateSelector.svelte";
     import type { AddTransactionRequest } from "../../../models/api/AddTransaction";
     import CategoryTransactionForm from "./CategoryTransactionForm.svelte";
     import WalletTransactionForm from "./WalletTransactionForm.svelte";

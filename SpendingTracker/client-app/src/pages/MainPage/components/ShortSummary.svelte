@@ -1,6 +1,6 @@
 <script lang="ts">
-    import api from '../../api';
-    import type { ShortSummary } from '../../models/transaction/ShortSummary';
+    import api from '../../../api';
+    import type { ShortSummary } from '../../../models/transaction/ShortSummary';
 
     export let walletId: number | null;
     export let reportPeriod: string | null;
