@@ -1,12 +1,13 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { onMount, SvelteComponent } from 'svelte';
     import api from './api';
     import token from './stores/tokenStore';
     import user from './stores/userStore';
-    import MainPage from './pages/MainPage/MainPage.svelte';
+    import categories from './stores/categoryStore';
     import Header from './components/Header.svelte';
     import GoogleLogin from './components/GoogleLogin.svelte';
-    import categories from './stores/categoryStore';
+    import MainPage from './pages/MainPage/MainPage.svelte';
+    import UserSettings from './pages/UserSettings/UserSettings.svelte';
 
     onMount(async () => {
         if($token) {
@@ -16,14 +17,16 @@
             categories.set(categoriesRes.data);
         }
     });
+
+    let page: typeof SvelteComponent = MainPage;
 </script>
 
 <div class="vertical-container">
-    <Header />
+    <Header on:settings-click={() => page = UserSettings}/>
 
     <div class="main">
         {#if $token}
-        <MainPage />
+        <svelte:component this={page} />
         {:else}
         <GoogleLogin />
         {/if}

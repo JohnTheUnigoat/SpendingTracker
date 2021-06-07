@@ -1,7 +1,10 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
     import token from "../stores/tokenStore";
     import user from "../stores/userStore";
     import LoggedInMenu from "./LoggedInMenu.svelte";
+
+    const dispatchUserSettings = createEventDispatcher<{'settings-click': null}>();
 
     let logOut = () => {
         token.set(null);
@@ -39,7 +42,7 @@
     {#if menuOpen}
     <div class="menu" bind:this={menuDiv}>
         <LoggedInMenu buttons={[
-            { text: 'User Settings', action: () => {} },
+            { text: 'User Settings', action: () => dispatchUserSettings('settings-click') },
             { text: 'Sign Out', action: logOut }
         ]}/>
     </div>
@@ -85,7 +88,6 @@
     }
 
     .menu {
-        /* width: 100%; */
         position: absolute;
         top: 120%;
         right: 0;

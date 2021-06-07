@@ -9,7 +9,7 @@
     </div>
     {#if $token}
     <div>
-        <LoggedIn />
+        <LoggedIn on:settings-click />
     </div>
     {/if}
 </div>

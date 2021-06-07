@@ -23,7 +23,6 @@
         display: block;
         margin: 0.5em 0;
         text-align: end;
-        /* width: 100%; */
         color: var(--highlight);
         background: none;
         border: none;
