@@ -363,7 +363,7 @@ namespace BL.Services.Impl
                 .GroupBy(x => x.walletId)
                 .Select(g => g.Sum(x => x.amount));
 
-            var allAmounts = categoryAmounts.Union(walletAmounts);
+            var allAmounts = categoryAmounts.Concat(walletAmounts);
 
             return new ShortTransactionSummaryDomain
             {
@@ -423,8 +423,7 @@ namespace BL.Services.Impl
                         t.Wallet.WalletAllowedUsers.Any(wu => wu.UserId == dto.UserId)
                 });
 
-            var walletInfosWithUnshared = nativeWalletInfos
-                .Union(relatedWalletInfos)
+            var walletInfosWithUnshared = nativeWalletInfos.Concat(relatedWalletInfos)
                 .GroupBy(x => new { x.WalletId, x.Name, x.IsWalletShared })
                 .Select(g => new
                 {

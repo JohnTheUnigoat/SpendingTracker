@@ -8,13 +8,16 @@
     import GoogleLogin from './components/GoogleLogin.svelte';
     import MainPage from './pages/MainPage/MainPage.svelte';
     import UserSettings from './pages/UserSettings/UserSettings.svelte';
+    import wallets from './stores/walletStore';
 
     onMount(async () => {
         if($token) {
-            const [userRes, categoriesRes] = await Promise.all([api.getUser(), api.getCategories()]);
+            const [userRes, categoriesRes, walletsRes] =
+                await Promise.all([api.getUser(), api.getCategories(), api.getWallets()]);
 
             user.set(userRes.data);
             categories.set(categoriesRes.data);
+            wallets.set(walletsRes.data);
         }
     });
 
