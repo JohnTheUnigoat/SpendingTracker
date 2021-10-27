@@ -34,7 +34,8 @@
 
     .container button:first-child {
         margin-right: 0.2em;
-        background: var(--bg-medium);
+        background: var(--bg-dark);
+        /* background: var(--bg-medium); */
         color: var(--white);
     }
 

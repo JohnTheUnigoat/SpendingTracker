@@ -6,7 +6,7 @@ namespace BL.Services
     public interface IUserService
     {
         /// <summary>
-        /// Gets user id but google id. Return 0 if no such user exists
+        /// Gets user id by google id. Return 0 if no such user exists
         /// </summary>
         Task<int> GetUserIdByGoogleId(string googleId);
 

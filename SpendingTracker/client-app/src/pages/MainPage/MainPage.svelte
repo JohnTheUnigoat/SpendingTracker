@@ -64,7 +64,7 @@
 
 <div class="container">
     <div class="select-container">
-        <div class="select wallet">
+        <div class="input wallet">
             <i class="fas fa-wallet"></i>
             <!-- svelte-ignore a11y-no-onchange -->
             <select bind:value={currentWallet} on:change={walletChange}>
@@ -74,7 +74,7 @@
             </select>
         </div>
         
-        <div class="select period">
+        <div class="input period">
             <i class="fas fa-calendar-alt"></i>
             <!-- svelte-ignore a11y-no-onchange -->
             <select bind:value={currentReportPeriod} on:change={reportPeriodChange}>
@@ -90,6 +90,18 @@
             <TwoStateSelector labels={["History", "Summary"]} bind:value={isSummarySelected}/>
         </div>
     </div>
+
+    <!-- <div class="time-range">
+        <div class="input">
+            <label for="from-input">From</label>
+            <input type="date" id="from-input">
+        </div>
+
+        <div class="input">
+            <label for="from-input">From</label>
+            <input type="date" id="from-input">
+        </div>
+    </div> -->
 
     {#if isSummarySelected}
     <Summary {walletId} {reportPeriod} bind:needUpdate={summaryNeedsUpdate} />
@@ -124,24 +136,24 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.7em;
+        /* margin-bottom: 0.7em; */
     }
 
     .select-container > * {
         margin-bottom: 0.4em;
     }
 
-    .select {
+    .input {
         display: flex;
         align-items: center;
         width: 100%;
     }
 
-    .select.wallet {
+    .input.wallet {
         padding-right: 0.2em;
     }
 
-    .select.period {
+    .input.period {
         padding-left: 0.2em;
     }
 
@@ -150,7 +162,7 @@
         width: 50%;
     }
 
-    .select .fas {
+    .input .fas {
         font-size: 150%;
         width: 1.2em;
         margin-right: 0.2em;
@@ -158,7 +170,8 @@
         color: var(--highlight);
     }
 
-    .select select {
+    .input select,
+    .input input {
         padding: 0.5em;
         color: var(--white);
         background: var(--bg-medium);
@@ -166,6 +179,14 @@
         border: none;
         border-radius: 0.5em;
         outline: none;
+    }
+
+    .time-range {
+        display: flex;
+    }
+
+    .input {
+        display: flex;
     }
 
     .add-transaction {
@@ -207,7 +228,7 @@
             flex-wrap: wrap;
         }
 
-        .select {
+        .input {
             width: 50%;
         }
 
@@ -223,11 +244,11 @@
     }
 
     @media screen and (max-width: 400px) {
-        .select .fas {
+        .input .fas {
             font-size: 120%;
         }
 
-        .select select {
+        .input select {
             padding: 0.2em;
         }
     }
