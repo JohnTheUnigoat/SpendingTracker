@@ -65,12 +65,9 @@ namespace SpendingTracker.Controllers
                 });
             }
 
-            AddUpdateTransactionDtoBase dto;
-
-            if (request.CategoryId.HasValue)
-                dto = request.ToCategoryDto(walletId, UserId);
-            else
-                dto = request.ToWalletDto(walletId, UserId);
+            AddUpdateTransactionDtoBase dto = request.CategoryId.HasValue
+                ? request.ToCategoryDto(walletId, UserId)
+                : request.ToWalletDto(walletId, UserId);
 
             return await _transactionService.AddTransactionAsync(dto);
         }
