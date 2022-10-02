@@ -168,77 +168,60 @@ namespace BL.Services.Impl
 
         private async Task ValidateTransactionDtoAsync(AddUpdateTransactionDtoBase dto)
         {
-            throw new NotImplementedException();
-            // if (dto.Amount == 0)
-            // {
-            //     throw new ValidationException(new()
-            //     {
-            //         { nameof(dto.Amount), "Transaction amount can't be 0." }
-            //     });
-            // }
-            //
-            // if (dto is AddUpdateCategoryTransactionDto)
-            // {
-            //     var cDto = dto as AddUpdateCategoryTransactionDto;
-            //
-            //     var categoryBelongsToWalletOwner = await _dbContext.Categories
-            //         .Where(c => c.Id == cDto.CaterodyId)
-            //         .Join(
-            //             _dbContext.Wallets.Where(w => w.Id == cDto.WalletId),
-            //             c => c.UserId,
-            //             w => w.UserId,
-            //             (c, w) => 1)
-            //         .AnyAsync();
-            //
-            //     if (categoryBelongsToWalletOwner == false)
-            //     {
-            //         throw new ValidationException(new() { { nameof(cDto.CaterodyId), "Category should belong to the wallet's owner." } });
-            //     }
-            //
-            //     var targetCategory = await _dbContext.Categories
-            //         .AsNoTracking()
-            //         .FirstAsync(c => c.Id == cDto.CaterodyId);
-            //
-            //     if (targetCategory.IsIncome && cDto.Amount < 0)
-            //     {
-            //         throw new ValidationException(new()
-            //         {
-            //             { nameof(cDto.Amount), "The transaction value should be positive for an income category." }
-            //         });
-            //     }
-            //
-            //     if (targetCategory.IsIncome == false && cDto.Amount > 0)
-            //     {
-            //         throw new ValidationException(new()
-            //         {
-            //             { nameof(cDto.Amount), "The transaction value should be negative for an expense category." }
-            //         });
-            //     }
-            // }
-            //
-            // if (dto is AddUpdateWalletTransactionDto)
-            // {
-            //     var wDto = dto as AddUpdateWalletTransactionDto;
-            //
-            //     if (wDto.WalletId == wDto.OtherWalletId)
-            //     {
-            //         throw new ValidationException(new()
-            //         {
-            //             { nameof(wDto.OtherWalletId), "Source wallet can not be the same as the wallet transaction belongs to." }
-            //         });
-            //     }
-            //
-            //     bool userAuthorizedForOtherWallet = await _dbContext.Wallets
-            //         .Where(w =>
-            //             w.Id == wDto.OtherWalletId &&
-            //             (w.UserId == dto.UserId || w.WalletAllowedUsers.Any(wu => wu.UserId == dto.UserId)))
-            //         .AnyAsync();
-            //
-            //     if (userAuthorizedForOtherWallet == false)
-            //     {
-            //         throw new HttpStatusException(404, "other wallet not found.");
-            //     }
-            // }
+            if (dto.Amount == 0)
+            {
+                throw new ValidationException(new()
+                {
+                    { nameof(dto.Amount), "Transaction amount can't be 0." }
+                });
+            }
+            
+            if (dto is AddUpdateCategoryTransactionDto)
+            {
+                var cDto = dto as AddUpdateCategoryTransactionDto;
+
+                var targetCategory = await _dbContext.Categories
+                    .AsNoTracking()
+                    .FirstAsync(c => c.Id == cDto.CaterodyId);
+            
+                if (targetCategory.IsIncome && cDto.Amount < 0)
+                {
+                    throw new ValidationException(new()
+                    {
+                        { nameof(cDto.Amount), "The transaction value should be positive for an income category." }
+                    });
+                }
+            
+                if (targetCategory.IsIncome == false && cDto.Amount > 0)
+                {
+                    throw new ValidationException(new()
+                    {
+                        { nameof(cDto.Amount), "The transaction value should be negative for an expense category." }
+                    });
+                }
+            }
+            
+            if (dto is AddUpdateWalletTransactionDto wDto)
+            {
+                if (wDto.WalletId == wDto.OtherWalletId)
+                {
+                    throw new ValidationException(new()
+                    {
+                        { nameof(wDto.OtherWalletId), "Source wallet can not be the same as the wallet transaction belongs to." }
+                    });
+                }
+            
+                bool userAuthorizedForOtherWallet = await _dbContext.Wallets
+                    .Where(w =>
+                        w.Id == wDto.OtherWalletId &&
+                        (w.UserId == dto.UserId || w.WalletAllowedUsers.Any(wu => wu.UserId == dto.UserId)))
+                    .AnyAsync();
+            
+                if (userAuthorizedForOtherWallet == false)
+                {
+                    throw new HttpStatusException(404, "other wallet not found.");
+                }
+            }
         }
 
         public async Task<int> AddTransactionAsync(AddUpdateTransactionDtoBase dto)

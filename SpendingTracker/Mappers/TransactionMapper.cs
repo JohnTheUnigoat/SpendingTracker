@@ -13,11 +13,11 @@ namespace SpendingTracker.Mappers
             int walletId,
             int userId) => new()
             {
+                UserId = userId,
                 WalletId = walletId,
                 Amount = request.Amount,
                 ManualTimestamp = request.ManualTimestamp,
-                UserId = userId,
-                CaterodyId = request.CategoryId.Value
+                CaterodyId = request.CategoryId.Value,
             };
 
         public static AddUpdateWalletTransactionDto ToWalletDto(
@@ -25,33 +25,33 @@ namespace SpendingTracker.Mappers
             int walletId,
             int userId) => new()
             {
+                UserId = userId,
                 WalletId = walletId,
                 Amount = request.Amount,
                 ManualTimestamp = request.ManualTimestamp,
-                UserId = userId,
-                OtherWalletId = request.OtherWalletId.Value
+                OtherWalletId = request.OtherWalletId.Value,
             };
 
         public static GetTransactionsDto ToDto(
             this GetTransactionRequest request,
             int walletId,
-            int userId) => new GetTransactionsDto
+            int userId) => new()
             {
                 WalletId = walletId,
                 ReportPeriod = request.ReportPeriod,
                 CustomFromDate = request.From,
                 CustomToDate = request.To,
-                UserId = userId
+                UserId = userId,
             };
 
-        public static TransactionResponse ToResponse(this TransactionDomain domain) => new TransactionResponse
+        public static TransactionResponse ToResponse(this TransactionDomain domain) => new()
         {
             Id = domain.Id,
             CategoryId = domain.CategoryId,
             OtherWalletId = domain.OtherWalletId,
             TargetLabel = domain.TargetLabel,
             Amount = domain.Amount,
-            Timestamp = domain.Timestamp
+            Timestamp = domain.Timestamp,
         };
 
         public static List<TransactionResponse> AllToResponse(this IEnumerable<TransactionDomain> domains) =>
@@ -59,18 +59,18 @@ namespace SpendingTracker.Mappers
 
 
         public static ShortTransactionSummaryResponse ToResponse(
-            this ShortTransactionSummaryDomain domain) => new ShortTransactionSummaryResponse
+            this ShortTransactionSummaryDomain domain) => new()
             {
                 Income = domain.Income,
-                Expense = domain.Expense
+                Expense = domain.Expense,
             };
 
         public static CategorySummaryResponse ToResponse(
-            this CategorySummaryDomain domain) => new CategorySummaryResponse
+            this CategorySummaryDomain domain) => new()
             {
                 Id = domain.Id,
                 Name = domain.Name,
-                Amount = domain.Amount
+                Amount = domain.Amount,
             };
 
         public static IEnumerable<CategorySummaryResponse> AllToResponse(
@@ -79,11 +79,11 @@ namespace SpendingTracker.Mappers
             .ToList();
 
         public static WalletSummaryResponse ToResponse(
-            this WalletSummaryDomain domain) => new WalletSummaryResponse
+            this WalletSummaryDomain domain) => new()
             {
                 Id = domain.Id,
                 Name = domain.Name,
-                Amount = domain.Amount
+                Amount = domain.Amount,
             };
 
         public static IEnumerable<WalletSummaryResponse> AllToResponse(
@@ -92,19 +92,19 @@ namespace SpendingTracker.Mappers
             .ToList();
 
         public static OneWaySummaryResponse ToResponse(
-            this OneWaySummaryDomain domain) => new OneWaySummaryResponse
+            this OneWaySummaryDomain domain) => new()
             {
                 Categories = domain.Categories.AllToResponse(),
-                Wallets = domain.Wallets.AllToResponse()
+                Wallets = domain.Wallets.AllToResponse(),
             };
 
         public static TransactionSummaryResponse ToResponse(
-            this TransactionSummaryDomain domain) => new TransactionSummaryResponse
-            {
+            this TransactionSummaryDomain domain) => new()
+        {
                 TotalIncome = domain.TotalIncome,
                 TotalExpense = domain.TotalExpense,
                 IncomeDetails = domain.IncomeDetails.ToResponse(),
-                ExpenseDetails = domain.ExpenseDetails.ToResponse()
+                ExpenseDetails = domain.ExpenseDetails.ToResponse(),
             };
     }
 }
