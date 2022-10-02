@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace DAL_EF.Entity
 {
-    [Index(nameof(GoogleId), IsUnique = true)]
-    [Index(nameof(Email), IsUnique = true)]
     public class User
     {
         public int Id { get; set; }
@@ -21,8 +18,8 @@ namespace DAL_EF.Entity
 
         public UserSettings Settings { get; set; }
 
-        public ICollection<Category> Categories { get; set; }
+        public List<Category> Categories { get; set; }
 
-        public ICollection<Wallet> Wallets { get; set; }
+        public List<Wallet> Wallets { get; set; }
     }
 }
