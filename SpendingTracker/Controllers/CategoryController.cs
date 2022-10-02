@@ -1,5 +1,4 @@
 ﻿using BL.Services;
-using Core.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SpendingTracker.Mappers;
@@ -9,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace SpendingTracker.Controllers
 {
-    [Route("api/categories")]
+    [Route("api/wallets/{walletId:int}/categories")]
     [ApiController]
     [Authorize]
     public class CategoryController : BaseController
     {
+        // TODO: centralized wallet authorization
         private readonly ICategoryService _categoryService;
         private readonly IWalletService _walletService;
 
@@ -24,47 +24,26 @@ namespace SpendingTracker.Controllers
         }
 
         [HttpGet]
-        public async Task<CategoriesResponse> GetCategories()
+        public async Task<CategoriesResponse> GetCategories(int walletId)
         {
-            return (await _categoryService.GetCategoriesAsync(UserId)).ToResponse();
-        }
-
-        [HttpGet("/api/wallets/{walletId:int}/categories")]
-        public async Task<CategoriesResponse> GetWalletCategories(int walletId)
-        {
-            if (await _walletService.IsUserAuthorizedForWalletAsync(walletId, UserId) == false)
-            {
-                throw new HttpStatusException(401);
-            }
-
-            return (await _categoryService.GetCategoriesForWalletAsync(walletId)).ToResponse();
+            return (await _categoryService.GetCategories(walletId)).ToResponse();
         }
 
         [HttpPost]
-        public async Task<int> AddCategory([FromBody] AddUpdateCategoryRequest request)
+        public async Task<int> AddCategory(int walletId, AddUpdateCategoryRequest request)
         {
-            return await _categoryService.AddCategoryAsync(request.ToDto(), UserId);
+            return await _categoryService.AddCategoryAsync(request.ToDto(walletId));
         }
-
+        
         [HttpPut("{categoryId:int}")]
-        public async Task UpdateCategory(int categoryId, [FromBody] AddUpdateCategoryRequest request)
+        public async Task UpdateCategory(int walletId, int categoryId, AddUpdateCategoryRequest request)
         {
-            if(await _categoryService.IsUserAuthorizedForCategoryAsync(categoryId, UserId) == false)
-            {
-                throw new HttpStatusException(404);
-            }
-
-            await _categoryService.UpdateCategory(categoryId, request.ToDto());
+            await _categoryService.UpdateCategory(categoryId, request.ToDto(walletId));
         }
 
         [HttpDelete("{categoryId:int}")]
         public async Task DeleteCategory(int categoryId)
         {
-            if (await _categoryService.IsUserAuthorizedForCategoryAsync(categoryId, UserId) == false)
-            {
-                throw new HttpStatusException(404);
-            }
-
             await _categoryService.DeleteCategory(categoryId);
         }
     }

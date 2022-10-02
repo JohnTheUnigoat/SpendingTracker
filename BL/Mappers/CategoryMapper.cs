@@ -5,12 +5,11 @@ namespace BL.Mappers
 {
     public static class CategoryMapper
     {
-
-        public static Category ToEntity(this AddUpdateCategoryDto dto, int userId) => new Category
+        public static Category ToEntity(this AddUpdateCategoryDto dto) => new()
         {
             Name = dto.CategoryName,
             IsIncome = dto.IsIncome,
-            UserId = userId
+            WalletId = dto.WalletId,
         };
     }
 }

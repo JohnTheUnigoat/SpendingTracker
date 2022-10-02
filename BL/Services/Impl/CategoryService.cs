@@ -3,7 +3,6 @@ using BL.Model.Category;
 using DAL_EF;
 using DAL_EF.Entity;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,9 +18,9 @@ namespace BL.Services.Impl
             _dbContext = dbContext;
         }
 
-        public async Task<int> AddCategoryAsync(AddUpdateCategoryDto dto, int userId)
+        public async Task<int> AddCategoryAsync(AddUpdateCategoryDto dto)
         {
-            var newCategory = dto.ToEntity(userId);
+            var newCategory = dto.ToEntity();
 
             _dbContext.Categories.Add(newCategory);
 
@@ -48,26 +47,10 @@ namespace BL.Services.Impl
             };
         }
 
-        public async Task<CategoriesDomain> GetCategoriesAsync(int userId)
+        public async Task<CategoriesDomain> GetCategories(int walletId)
         {
             IQueryable<Category> categories = _dbContext.Categories
-                .Where(c => c.UserId == userId);
-
-            return await GetCategoriesDomain(categories);
-        }
-
-        public async Task<CategoriesDomain> GetCategoriesForWalletAsync(int walletId)
-        {
-            IQueryable<int> userIdQueriable = _dbContext.Wallets
-                .Where(w => w.Id == walletId)
-                .Select(w => w.UserId);
-
-            IQueryable<Category> categories = _dbContext.Categories
-                .Join(
-                    userIdQueriable,
-                    c => c.UserId,
-                    uId => uId,
-                    (c, uId) => c);
+                .Where(c => c.WalletId == walletId);
 
             return await GetCategoriesDomain(categories);
         }
@@ -94,11 +77,6 @@ namespace BL.Services.Impl
             category.IsIncome = dto.IsIncome;
 
             await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task<bool> IsUserAuthorizedForCategoryAsync(int categoryId, int userId)
-        {
-            return await _dbContext.Categories.AnyAsync(c => c.Id == categoryId && c.UserId == userId);
         }
     }
 }

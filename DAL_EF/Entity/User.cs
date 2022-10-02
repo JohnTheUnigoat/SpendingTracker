@@ -18,8 +18,6 @@ namespace DAL_EF.Entity
 
         public UserSettings Settings { get; set; }
 
-        public List<Category> Categories { get; set; }
-
         public List<Wallet> Wallets { get; set; }
     }
 }

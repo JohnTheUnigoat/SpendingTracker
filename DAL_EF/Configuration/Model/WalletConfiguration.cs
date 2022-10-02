@@ -15,6 +15,11 @@ namespace DAL_EF.Configuration.Model
                 .HasDefaultValue(ReportPeriods.CurrentMonth);
 
             builder
+                .HasMany(w => w.Categories)
+                .WithOne()
+                .HasForeignKey(c => c.WalletId);
+            
+            builder
                 .HasMany(w => w.WalletAllowedUsers)
                 .WithOne()
                 .HasForeignKey(wu => wu.WalletId);

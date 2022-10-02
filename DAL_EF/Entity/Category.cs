@@ -8,6 +8,6 @@
 
         public bool IsIncome { get; set; }
 
-        public int UserId { get; set; }
+        public int WalletId { get; set; }
     }
 }

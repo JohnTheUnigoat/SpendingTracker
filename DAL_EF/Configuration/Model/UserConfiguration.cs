@@ -14,11 +14,6 @@ namespace DAL_EF.Configuration.Model
                 .HasForeignKey<UserSettings>(us => us.UserId);
 
             builder
-                .HasMany(u => u.Categories)
-                .WithOne()
-                .HasForeignKey(c => c.UserId);
-
-            builder
                 .HasMany(u => u.Wallets)
                 .WithOne(w => w.User)
                 .HasForeignKey(w => w.UserId)

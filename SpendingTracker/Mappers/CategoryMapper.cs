@@ -25,10 +25,11 @@ namespace SpendingTracker.Mappers
             Expense = domain.Expense.AllToResponse()
         };
 
-        public static AddUpdateCategoryDto ToDto(this AddUpdateCategoryRequest request) => new AddUpdateCategoryDto
+        public static AddUpdateCategoryDto ToDto(this AddUpdateCategoryRequest request, int walletId) => new()
         {
             CategoryName = request.Name,
-            IsIncome = request.IsIncome
+            WalletId = walletId,
+            IsIncome = request.IsIncome,
         };
     }
 }
